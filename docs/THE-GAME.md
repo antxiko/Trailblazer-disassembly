@@ -15,6 +15,11 @@ The keys are given by the game itself, in the scroller on the title screen:
 **Q** left, **W** right, **P** speed up, **L** slow down and **space** to jump.
 A Kempston stick works too, and the options screen picks between the two.
 
+One more the game never mentions: **CTRL+STOP quits the game in progress** and
+goes back to the title. It is the only two-key combination in the whole tape —
+`0x8A4B` asks for CTRL and, if it is down, for STOP, and both together jump to
+`0x8AC1`.
+
 There are two games:
 
 - **PLAY ARCADE**, the fourteen tracks one after another, with seven lives and

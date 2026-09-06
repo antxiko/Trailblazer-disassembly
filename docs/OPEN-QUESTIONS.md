@@ -4,14 +4,13 @@ All 38,299 bytes are explained and the five listings reproduce the tape byte for
 byte. What follows are not gaps in the disassembly: they are things the game
 does whose **why** has not been measured, or that could not be reached.
 
-## How you get into the cheat mode
+## ~~How you get into the cheat mode~~ — closed
 
-The banner is there: **FOOLED YOU!    YOU ARE NOW IN CHEAT MODE**, at `0x9CE6`.
-And the scroller jokes that *there may be a Cheat mode but I doubt it*.
-
-What has not been found is **what you have to do to make it come up**. The
-string is pointed at by no traced instruction, so it is painted from code that
-only runs down that path.
+You do not. The banner at `0x9CE6` is unreachable: no instruction in the tape
+loads anything from page `0x9C`, none of the twelve key checks looks at Z, X or
+C — the C64's combination — and a read watchpoint over the block records
+nothing with the three keys held down on the title, on the options screen and
+during play. Measured, with its control, in [Findings](FINDINGS.html).
 
 ## Six routines nobody is known to call
 
@@ -26,8 +25,8 @@ variables as the rest of the game and finish on a `ret` — but:
   **none of them is entered**.
 
 Either they belong to screens the test never reached — game over, the high score
-table, the cheat mode itself — or they are dead code. They are declared as code
-because that is what they are; how you reach them is not known.
+table — or they are dead code. They are declared as code because that is what
+they are; how you reach them is not known.
 
 ## The turbo loader that goes unused
 

@@ -89,6 +89,7 @@ audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
 <p>A ball rolling down a track in perspective, strewn with holes, with stretches that speed you up, stretches that slow you down and tiles that bounce you. There are <b>fourteen tracks</b> and a clock, and that is the whole game.</p>
 <h2 id="how-you-play">How you play</h2>
 <p>The keys are given by the game itself, in the scroller on the title screen: <b>Q</b> left, <b>W</b> right, <b>P</b> speed up, <b>L</b> slow down and <b>space</b> to jump. A Kempston stick works too, and the options screen picks between the two.</p>
+<p>One more the game never mentions: <b>CTRL+STOP quits the game in progress</b> and goes back to the title. It is the only two-key combination in the whole tape — <code>0x8A4B</code> asks for CTRL and, if it is down, for STOP, and both together jump to <code>0x8AC1</code>.</p>
 <p>There are two games:</p>
 <ul><li><b>PLAY ARCADE</b>, the fourteen tracks one after another, with seven lives and four jumps. The clock <b>counts up</b>.</li><li><b>3 COURSE TEST</b>, three tracks chosen with A, B and C. Here the clock <b>counts down</b>: it is a race against time.</li></ul>
 <p>That is what the twin routines at <code>0x9284</code> and <code>0x92A7</code> say: the first takes the clock down digit by digit and the second adds to it.</p>

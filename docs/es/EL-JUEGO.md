@@ -16,6 +16,10 @@ Las teclas las dice el propio juego, en el rótulo que desfila por el título:
 saltar. También vale un mando Kempston, y en el menú de opciones se elige entre
 los dos.
 
+Y una que el juego no dice: **CTRL+STOP abandona la partida** y vuelve al
+título. Es la única combinación de dos teclas de toda la cinta —`0x8A4B` pide
+la CTRL y, si está pulsada, la STOP, y las dos juntas saltan a `0x8AC1`.
+
 Hay dos partidas:
 
 - **PLAY ARCADE**, las catorce pistas seguidas, con siete vidas y cuatro

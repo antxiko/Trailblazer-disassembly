@@ -112,7 +112,7 @@ R7 = 0x01   borde negro</code></pre>
 <h2 id="quien-entra-en-una-rutina">Quién entra en una rutina</h2>
 <pre><code>tools/omsx_quien_llama.tcl</code></pre>
 <p>Punto de ruptura en la rutina y a ver quién ha dejado la dirección de vuelta en la pila. Se usó con seis rutinas a las que no llama nadie de forma visible: no aparecen en ningún <code>call</code>, <code>jp</code> ni <code>ld hl,</code>, ni hay saltos relativos del código trazado que caigan en ellas.</p>
-<p>De las seis, <b>ninguna se ejecutó</b> en noventa segundos de partida. O son de pantallas que la prueba no llegó a tocar —el fin de partida, la tabla de récords, el modo de trampas— o son código muerto. Está en <a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a>.</p>
+<p>De las seis, <b>ninguna se ejecutó</b> en noventa segundos de partida. O son de pantallas que la prueba no llegó a tocar —el fin de partida, la tabla de récords— o son código muerto. El modo de trampas ya no vale como explicación: no se puede alcanzar, y está medido en <a href="HALLAZGOS.html">Hallazgos</a>. Las seis están en <a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a>.</p>
 <p>También sirvió para lo contrario: confirmar que <code>0x8E4B</code> y <code>0x92D1</code>, a las que se llega por un <code>ld hl,nn / push hl</code> y no por un <code>call</code>, <b>sí se ejecutan</b>.</p>
 <h2 id="que-trozos-del-cargador-corren-de-verdad">Qué trozos del cargador corren de verdad</h2>
 <pre><code>tools/omsx_muestrea.tcl</code></pre>

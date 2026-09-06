@@ -139,13 +139,37 @@ MARK'S MOTOROLA · **CHRIS'S CUL-DE-SAC** · WELL I NEVER · SHRIGGLES'S SHRIGGL
 Terry Lloyd, Pete Harrap, Greg Holmes, Shaun Hollingworth and Chris Kerry all
 appear in the credits.
 
-## The cheat mode exists
+## The cheat mode banner is there, and cannot be seen
 
-The scroller jokes that *there may be a Cheat mode but I doubt it*. There is: at
-`0x9CE6` sits its banner, **FOOLED YOU!    YOU ARE NOW IN CHEAT MODE**, right up
-against Gremlin's copyright.
+The scroller jokes that *there may be a Cheat mode but I doubt it*. The banner is
+there all right: at `0x9CE6`, **FOOLED YOU!    YOU ARE NOW IN CHEAT MODE**, right
+against Gremlin's copyright, terminated by bit 7 like every string in the game.
 
-How you get into it is an [open question](OPEN-QUESTIONS.html).
+**Nothing paints it.** In all 38,299 bytes there is not one instruction loading
+anything from page `0x9C`: no `ld hl,09Cxxh`, no `ld h,09Ch`, not one stray word
+pointing into the block.
+
+On the Commodore 64 you enter the cheat mode with **Z+X+C**. Here you cannot: the
+whole keyboard goes through a single routine, `mira_una_tecla` at `0xBF62`, which
+builds its `bit n,a` inside the instruction itself; the binary holds **twelve**
+calls to it, and among the codes handed to it — a key code is row×8+bit — there
+is no Z (`0x2F`), no X (`0x2D`) and no C (`0x18`):
+
+| code | key | what for |
+|---|---|---|
+| `0x22` | M | the music |
+| `0x00` | row 0 | its bits 3 and 4: the menu's **3** and **4** |
+| `0x26` `0x21` `0x2C` `0x25` | Q L W P | left, down, right, up |
+| `0x40` | SPACE | jump |
+| `0x31` + `0x3C` | CTRL + STOP | **quit the game in progress** |
+
+And asked of the machine: with a read watchpoint over `0x9CC8..0x9D19` and the
+three keys held down six seconds on the title, six on the options screen and
+eight during play, **zero reads**. As a control, the combination that does
+exist: with a breakpoint on `0x8AC1`, five seconds of play touching nothing
+never reach it, and pressing CTRL+STOP does.
+
+The text made the conversion; the trigger did not.
 
 ## Two kilobytes of stale memory, recorded onto the tape
 

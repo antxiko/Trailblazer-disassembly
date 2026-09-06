@@ -68,8 +68,10 @@ the stack. It was used on six routines nobody visibly calls: they appear in no
 `call`, `jp` or `ld hl,`, and no relative jump from traced code lands in them.
 
 Of the six, **none ran** in ninety seconds of play. Either they belong to
-screens the test never reached — game over, the high score table, the cheat mode
-— or they are dead code. It is in [Open questions](OPEN-QUESTIONS.html).
+screens the test never reached — game over, the high score table — or they are
+dead code. The cheat mode is no longer a candidate: it cannot be reached at all,
+and that is measured in [Findings](FINDINGS.html). The six are in
+[Open questions](OPEN-QUESTIONS.html).
 
 It also served the opposite purpose: confirming that `0x8E4B` and `0x92D1`,
 reached by a `ld hl,nn / push hl` rather than a `call`, **do run**.

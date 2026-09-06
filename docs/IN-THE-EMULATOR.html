@@ -112,7 +112,7 @@ R7 = 0x01   black border</code></pre>
 <h2 id="who-enters-a-routine">Who enters a routine</h2>
 <pre><code>tools/omsx_quien_llama.tcl</code></pre>
 <p>Breakpoint on the routine, then look at who has just left the return address on the stack. It was used on six routines nobody visibly calls: they appear in no <code>call</code>, <code>jp</code> or <code>ld hl,</code>, and no relative jump from traced code lands in them.</p>
-<p>Of the six, <b>none ran</b> in ninety seconds of play. Either they belong to screens the test never reached — game over, the high score table, the cheat mode — or they are dead code. It is in <a href="OPEN-QUESTIONS.html">Open questions</a>.</p>
+<p>Of the six, <b>none ran</b> in ninety seconds of play. Either they belong to screens the test never reached — game over, the high score table — or they are dead code. The cheat mode is no longer a candidate: it cannot be reached at all, and that is measured in <a href="FINDINGS.html">Findings</a>. The six are in <a href="OPEN-QUESTIONS.html">Open questions</a>.</p>
 <p>It also served the opposite purpose: confirming that <code>0x8E4B</code> and <code>0x92D1</code>, reached by a <code>ld hl,nn / push hl</code> rather than a <code>call</code>, <b>do run</b>.</p>
 <h2 id="which-parts-of-the-loader-actually-run">Which parts of the loader actually run</h2>
 <pre><code>tools/omsx_muestrea.tcl</code></pre>

@@ -5,15 +5,14 @@ a byte. Lo que sigue no son huecos del desensamblado: son cosas que el juego
 hace y de las que no se ha medido el **porqué**, o que no se han podido
 alcanzar.
 
-## Cómo se entra en el modo de trampas
+## ~~Cómo se entra en el modo de trampas~~ — cerrada
 
-El cartel está: **FOOLED YOU!    YOU ARE NOW IN CHEAT MODE**, en `0x9CE6`. Y el
-rótulo que desfila bromea con que *puede que haya un modo de trampas, pero lo
-dudo*.
-
-Lo que no se ha encontrado es **qué hay que hacer para que salga**. La cadena no
-la apunta ninguna instrucción trazada, así que se pinta desde código que solo
-corre por ese camino.
+No se entra. El cartel de `0x9CE6` es inalcanzable: ninguna instrucción de la
+cinta carga nada de la página `0x9C`, ninguna de las doce comprobaciones de
+tecla mira la Z, la X ni la C —la combinación del C64—, y un vigía de lectura
+sobre el bloque no anota nada con las tres teclas mantenidas en el título, en
+las opciones y en la partida. Medido, con su control, en
+[Hallazgos](HALLAZGOS.html).
 
 ## Seis rutinas a las que no se sabe cómo se llega
 
@@ -28,8 +27,8 @@ mismas variables que el resto del juego y rematan en `ret`—, pero:
   **no se entra en ninguna**.
 
 O son de pantallas que la prueba no llegó a tocar —el fin de partida, la tabla
-de récords, el propio modo de trampas— o son código muerto. Se declaran como
-código porque lo son; de dónde se llega a ellas, no se sabe.
+de récords— o son código muerto. Se declaran como código porque lo son; de
+dónde se llega a ellas, no se sabe.
 
 ## El cargador rápido que no se usa
 

@@ -137,13 +137,38 @@ MARK'S MOTOROLA · **CHRIS'S CUL-DE-SAC** · WELL I NEVER · SHRIGGLES'S SHRIGGL
 Terry Lloyd, Pete Harrap, Greg Holmes, Shaun Hollingworth y Chris Kerry salen
 todos en los créditos.
 
-## El modo de trampas existe
+## El cartel del modo de trampas está, pero no se puede ver
 
-El rótulo bromea con que *there may be a Cheat mode but I doubt it*. Lo hay: en
-`0x9CE6` está su cartel, **FOOLED YOU!    YOU ARE NOW IN CHEAT MODE**, pegado
-al copyright de Gremlin.
+El rótulo bromea con que *there may be a Cheat mode but I doubt it*. Y el cartel
+está: en `0x9CE6`, **FOOLED YOU!    YOU ARE NOW IN CHEAT MODE**, pegado al
+copyright de Gremlin y cerrado con el bit 7 como todos los textos del juego.
 
-Cómo se entra es una [pregunta abierta](PREGUNTAS-ABIERTAS.html).
+**No lo pinta nadie.** En los 38.299 bytes no hay una sola instrucción que
+cargue nada de la página `0x9C`: ni un `ld hl,09Cxxh`, ni un `ld h,09Ch`, ni una
+palabra suelta que apunte al bloque.
+
+En el Commodore 64 al modo de trampas se entra con **Z+X+C**. Aquí no puede
+entrarse así: el teclado entero pasa por una sola rutina, `mira_una_tecla` en
+`0xBF62`, que se fabrica el `bit n,a` dentro de la propia instrucción; el binario
+tiene **doce** llamadas a esa rutina, y entre los códigos que se le pasan —el
+código de tecla es fila×8+bit— no están ni la Z (`0x2F`), ni la X (`0x2D`), ni la
+C (`0x18`):
+
+| código | tecla | para qué |
+|---|---|---|
+| `0x22` | M | la música |
+| `0x00` | fila 0 | sus bits 3 y 4: el **3** y el **4** del menú |
+| `0x26` `0x21` `0x2C` `0x25` | Q L W P | izquierda, abajo, derecha, arriba |
+| `0x40` | ESPACIO | saltar |
+| `0x31` + `0x3C` | CTRL + STOP | **abandonar la partida** |
+
+Y preguntado a la máquina: con un vigía de lectura sobre `0x9CC8..0x9D19` y las
+tres teclas mantenidas seis segundos en el título, seis en las opciones y ocho
+dentro de la partida, **cero lecturas**. De control, la combinación que sí
+existe: con un alto en `0x8AC1`, cinco segundos jugando sin tocar nada no pasan
+por ahí, y apretando CTRL+STOP sí.
+
+El texto viajó en la conversión; el disparador, no.
 
 ## Dos kilobytes de memoria vieja, grabados en la cinta
 

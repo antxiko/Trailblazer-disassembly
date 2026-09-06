@@ -771,10 +771,10 @@ L_8A42:
 	or a			;8a45
 	jr nz,la_bola_se_ha_perdido		;8a46
 	ld (09658h),a		;8a48
-	ld a,031h		;8a4b   ; la tecla 1
+	ld a,031h		;8a4b   ; la tecla CTRL: fila 6, bit 1
 	call mira_una_tecla		;8a4d
 	jr nz,L_8A5A		;8a50
-	ld a,03ch		;8a52   ; y la tecla 0
+	ld a,03ch		;8a52   ; y la STOP: fila 7, bit 4. LAS DOS A LA VEZ ABANDONAN LA PARTIDA, y es la unica combinacion de teclas del juego. Medido en la maquina: cinco segundos jugando sin tocar nada no pasan por 0x8AC1, y apretandolas si
 	call mira_una_tecla		;8a54
 	jp z,L_8AC1		;8a57
 L_8A5A:
@@ -3631,9 +3631,15 @@ vuelca_los_patrones:
 
 ; ----------------------------------------------------------------------
 ; DATOS copyright_y_modo_de_trampas: ' 1986 Gremlin Graphics Ltd' y el rotulo
-;   del modo de trampas: 'FOOLED YOU!    YOU ARE NOW IN CHEAT MODE'. En el
-;   texto que desfila el juego bromea con que "puede que haya un modo de
-;   trampas, pero lo dudo": lo hay
+;   del modo de trampas: 'FOOLED YOU!    YOU ARE NOW IN CHEAT MODE', las dos
+;   cerradas con el bit 7 como todos los textos. ESTAN, PERO NO LAS PINTA
+;   NADIE: no hay una sola instruccion en los 38.299 bytes que cargue nada de
+;   la pagina 0x9C. En el C64 al modo se entra con Z+X+C; aqui esas tres
+;   teclas (0x2F, 0x2D y 0x18) no aparecen en ninguna de las doce llamadas a
+;   mira_una_tecla, y con las tres apretadas en el titulo, en las opciones y
+;   en la partida, el vigia sobre 0x9CC8..0x9D19 no anota una sola lectura. El
+;   texto que desfila bromea con que "puede que haya un modo de trampas, pero
+;   lo dudo": en esta conversion, no lo hay
 ;   0x9cc8..0x9d1a  (82 bytes)
 DATA_copyright_y_modo_de_trampas:
 	defb 07fh,020h,031h,039h,038h,036h,020h,047h,072h,065h,06dh,06ch,069h,06eh,020h,047h	; 9cc8  . 1986 Gremlin G
@@ -4712,7 +4718,7 @@ lee_el_teclado:
 	call lee_el_mando_o_las_teclas		;bece   ; las teclas
 	or a			;bed1
 	ret nz			;bed2
-	ld a,026h		;bed3   ; la 'W'
+	ld a,026h		;bed3   ; la 'Q' (fila 4, bit 6): IZQUIERDA. Los cinco bits del mando salen de la tabla de 0xBF52 con el orden dado la vuelta, asi que de aqui en adelante bit 0 es derecha, bit 1 izquierda, bit 2 abajo y bit 3 arriba
 	ld b,000h		;bed5
 	ld c,002h		;bed7
 	call mira_una_tecla		;bed9
@@ -4721,7 +4727,7 @@ lee_el_teclado:
 	or c			;bedf
 	ld b,a			;bee0
 L_BEE1:
-	ld a,021h		;bee1   ; la 'Q', que es izquierda
+	ld a,021h		;bee1   ; la 'L' (fila 4, bit 1): ABAJO
 	ld c,004h		;bee3
 	call mira_una_tecla		;bee5
 	jr nz,L_BEED		;bee8
@@ -4729,9 +4735,9 @@ L_BEE1:
 	or c			;beeb
 	ld b,a			;beec
 L_BEED:
-	ld a,02ch		;beed
+	ld a,02ch		;beed   ; la 'W' (fila 5, bit 4): DERECHA
 	ld c,001h		;beef
-	bit 1,b		;bef1   ; y si no, la coma del teclado numerico
+	bit 1,b		;bef1   ; si la izquierda ya esta puesta, la derecha ni se mira
 	jr nz,L_BEFD		;bef3
 	call mira_una_tecla		;bef5
 	jr nz,L_BEFD		;bef8
@@ -4739,7 +4745,7 @@ L_BEED:
 	or c			;befb
 	ld b,a			;befc
 L_BEFD:
-	ld a,025h		;befd   ; la barra espaciadora: SALTAR
+	ld a,025h		;befd   ; la 'P' (fila 4, bit 5): ARRIBA
 	ld c,008h		;beff
 	call mira_una_tecla		;bf01
 	jr nz,L_BF09		;bf04
@@ -4748,7 +4754,7 @@ L_BEFD:
 	ld b,a			;bf08
 L_BF09:
 	ld c,b			;bf09
-	ld a,040h		;bf0a   ; y el disparo del mando
+	ld a,040h		;bf0a   ; la barra espaciadora (fila 8, bit 0), o el disparo del mando: SALTAR. Las cinco son las que el rotulo que desfila anuncia: 'the keys are Q-Left, W-right, P-Up, L-Down and Space to jump'
 	call mira_una_tecla		;bf0c
 	ld a,000h		;bf0f
 	jr nz,L_BF15		;bf11

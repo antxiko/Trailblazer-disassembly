@@ -70,8 +70,9 @@ trazado que caigan en ellas.
 
 De las seis, **ninguna se ejecutó** en noventa segundos de partida. O son de
 pantallas que la prueba no llegó a tocar —el fin de partida, la tabla de
-récords, el modo de trampas— o son código muerto. Está en [Preguntas
-abiertas](PREGUNTAS-ABIERTAS.html).
+récords— o son código muerto. El modo de trampas ya no vale como explicación:
+no se puede alcanzar, y está medido en [Hallazgos](HALLAZGOS.html). Las seis
+están en [Preguntas abiertas](PREGUNTAS-ABIERTAS.html).
 
 También sirvió para lo contrario: confirmar que `0x8E4B` y `0x92D1`, a las que
 se llega por un `ld hl,nn / push hl` y no por un `call`, **sí se ejecutan**.

@@ -214,7 +214,7 @@ F 0x9593 8
 D 0x964b 0x965c tabla_y_variables_de_la_pantalla  diecisiete bytes: los primeros son parametros de montaje y los ultimos, de 0x9658 a 0x965C, variables que el codigo escribe nueve veces
 D 0x981c 0x985b menu_de_opciones  'OPTIONS', '3 : Play the game', '4 : Game/Scores/Times' y 'M : Music On/Off', con el final en el bit 7
 D 0x9afc 0x9b01 variables_del_menu  cinco bytes de trabajo, nueve escrituras
-D 0x9cc8 0x9d1a copyright_y_modo_de_trampas  ' 1986 Gremlin Graphics Ltd' y el rotulo del modo de trampas: 'FOOLED YOU!    YOU ARE NOW IN CHEAT MODE'. En el texto que desfila el juego bromea con que "puede que haya un modo de trampas, pero lo dudo": lo hay
+D 0x9cc8 0x9d1a copyright_y_modo_de_trampas  ' 1986 Gremlin Graphics Ltd' y el rotulo del modo de trampas: 'FOOLED YOU!    YOU ARE NOW IN CHEAT MODE', las dos cerradas con el bit 7 como todos los textos. ESTAN, PERO NO LAS PINTA NADIE: no hay una sola instruccion en los 38.299 bytes que cargue nada de la pagina 0x9C. En el C64 al modo se entra con Z+X+C; aqui esas tres teclas (0x2F, 0x2D y 0x18) no aparecen en ninguna de las doce llamadas a mira_una_tecla, y con las tres apretadas en el titulo, en las opciones y en la partida, el vigia sobre 0x9CC8..0x9D19 no anota una sola lectura. El texto que desfila bromea con que "puede que haya un modo de trampas, pero lo dudo": en esta conversion, no lo hay
 
 # ======================================================================
 # COMENTARIOS DE LINEA
@@ -317,8 +317,8 @@ C 0x8a1d treinta y dos vueltas de la cuenta atras
 C 0x8a29 las vidas que quedan
 C 0x8a36 un cuadro entero, a mano, sin esperar a la interrupcion
 C 0x8a3b tres
-C 0x8a4b la tecla 1
-C 0x8a52 y la tecla 0
+C 0x8a4b la tecla CTRL: fila 6, bit 1
+C 0x8a52 y la STOP: fila 7, bit 4. LAS DOS A LA VEZ ABANDONAN LA PARTIDA, y es la unica combinacion de teclas del juego. Medido en la maquina: cinco segundos jugando sin tocar nada no pasan por 0x8AC1, y apretandolas si
 L 0x9107 apaga_un_pixel
 L 0x9134 la_interrupcion
 L 0x91e9 mueve_el_salto
@@ -819,8 +819,6 @@ C 0x9099 se le resta dos veces
 C 0x909d se cruzan los dos bytes
 C 0x90a3 Y SE MEZCLA CON EL REGISTRO R, el contador de refresco de la DRAM, que va cambiando con cada instruccion: asi dos partidas no salen iguales
 C 0xbece las teclas
-C 0xbed3 la 'W'
-C 0xbee1 la 'Q'
 L 0x8258 toca_el_canal_2
 L 0x8294 la_musica_de_fondo
 L 0x8339 saca_las_tres_voces
@@ -865,10 +863,12 @@ C 0x8366 el registro 9, el volumen del canal B
 C 0x836b que va bajando cuadro a cuadro
 C 0x8371 entre dos, para que la nota se apague sola
 C 0x8375 y el 10, el del canal C
-C 0xbee1 la 'Q', que es izquierda
-C 0xbef1 y si no, la coma del teclado numerico
-C 0xbefd la barra espaciadora: SALTAR
-C 0xbf0a y el disparo del mando
+C 0xbed3 la 'Q' (fila 4, bit 6): IZQUIERDA. Los cinco bits del mando salen de la tabla de 0xBF52 con el orden dado la vuelta, asi que de aqui en adelante bit 0 es derecha, bit 1 izquierda, bit 2 abajo y bit 3 arriba
+C 0xbee1 la 'L' (fila 4, bit 1): ABAJO
+C 0xbeed la 'W' (fila 5, bit 4): DERECHA
+C 0xbef1 si la izquierda ya esta puesta, la derecha ni se mira
+C 0xbefd la 'P' (fila 4, bit 5): ARRIBA
+C 0xbf0a la barra espaciadora (fila 8, bit 0), o el disparo del mando: SALTAR. Las cinco son las que el rotulo que desfila anuncia: 'the keys are Q-Left, W-right, P-Up, L-Down and Space to jump'
 C 0xbf17 el registro 15 del PSG es el que elige la fila del teclado
 C 0xbf1d se prepara para leer el puerto 1
 C 0xbf23 y el 14 devuelve lo leido

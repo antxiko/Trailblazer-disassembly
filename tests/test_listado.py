@@ -417,14 +417,52 @@ class TestLosTextos(unittest.TestCase):
                       "4 : Game/Scores/Times", "M : Music On/Off"):
             self.assertIn(frase, t)
 
-    def test_existe_el_modo_de_trampas(self):
+    def test_esta_el_cartel_del_modo_de_trampas(self):
         """En el rotulo que desfila el juego bromea con que 'puede que haya un
-        modo de trampas, pero lo dudo'. Lo hay, y este es su cartel."""
+        modo de trampas, pero lo dudo'. El cartel esta en la cinta."""
         t = texto(trozo("juego", 0x9CC8, 0x9D1A - 0x9CC8))
         self.assertIn("YOU ARE NOW IN CHEAT MODE", t)
         self.assertIn("1986 Gremlin Graphics Ltd", t)
         self.assertIn("There may be a Cheat mode but I doubt it",
                       texto(trozo("juego", 0x9E69, 0xA29E - 0x9E69)))
+
+    def test_al_modo_de_trampas_no_se_puede_llegar(self):
+        """Y el cartel no lo pinta nadie: ninguna instruccion de las cinco
+        piezas carga nada de la pagina 0x9C, que es donde vive."""
+        for p in PIEZAS:
+            for ln in lee(asm(p)).splitlines():
+                s = ln.lstrip()
+                if not ln.startswith("\t") or s.startswith(("def", ";", "org")):
+                    continue
+                codigo = ln.split(";")[0]
+                self.assertNotRegex(
+                    codigo, r"0?9c[0-9a-f]{2}h",
+                    "en %s hay un operando de la pagina 0x9C: %r" % (p, ln))
+
+    def test_ninguna_tecla_mirada_es_la_z_la_x_ni_la_c(self):
+        """En el C64 al modo de trampas se entra con Z+X+C. Aqui el teclado
+        entero pasa por `mira_una_tecla`, y entre los codigos que se le pasan no
+        estan ni la Z (0x2F), ni la X (0x2D), ni la C (0x18): el codigo de tecla
+        es fila*8+bit."""
+        pedidas, ultima = [], None
+        for ln in lee(asm("juego")).splitlines():
+            s = ln.split(";")[0].strip()
+            m = re.match(r"^ld a,0([0-9a-f]{2})h$", s)
+            if m:
+                ultima = int(m.group(1), 16)
+            elif s == "xor a":
+                ultima = 0x00
+            elif s in ("ld a,b", "ld a,l", "ld a,(hl)"):
+                ultima = None          # el codigo se calcula, no es literal
+            elif s == "call mira_una_tecla":
+                pedidas.append(ultima)
+        self.assertEqual(len(pedidas), 12, "no son doce las llamadas")
+        for tecla, nombre in ((0x2F, "Z"), (0x2D, "X"), (0x18, "C")):
+            self.assertNotIn(tecla, pedidas, "se mira la '%s'" % nombre)
+        # las que si se miran: M, la fila 0 (el 3 y el 4), CTRL+STOP, y los
+        # cinco mandos que anuncia el rotulo: Q, L, W, P y el espacio
+        self.assertEqual(set(x for x in pedidas if x is not None),
+                         {0x00, 0x21, 0x22, 0x25, 0x26, 0x2C, 0x31, 0x3C, 0x40})
 
     def test_la_tabla_de_records_trae_catorce_lineas(self):
         t = texto(trozo("juego", 0x9A31, 0x9AA1 - 0x9A31))
