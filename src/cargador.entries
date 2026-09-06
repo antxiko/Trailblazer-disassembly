@@ -1,0 +1,31 @@
+# Puntos de entrada del turbo loader de cinta (0xD800-0xD980, 385 bytes).
+#
+# El unico que no hay que deducir lo dice la cabecera del fichero de cinta:
+# `BIN load=0xD800 end=0xD980 exec=0xD800`. Lo imprime tools/cinta.py, y el
+# BASIC de la cinta hace BLOAD "CAS:",R para que la BIOS salte ahi.
+0xD800
+
+# Y una que SI hay que declarar: 0xD836 es un `jp (hl)` con hl puesto desde
+# 0xD8ED, que es la direccion de carga que acaba de leer de la cabecerita. O
+# sea, el salto a la pieza recien cargada. El trazador no puede seguirlo
+# porque el destino no esta en este fichero, sino en la cinta.
+
+# UNA RUTINA QUE NO SE EJECUTA: EL CARGADOR RAPIDO QUE NO SE USA.
+#
+# 0xD8D5 lee el bit de la cinta A MANO: espera el flanco del **puerto 0xA2**,
+# que es por donde el PSG devuelve la entrada de casete (`in a,(0a2h)` de
+# 0xD8D9, `and 040h` de 0xD8DD para quedarse con el bit), y de paso saca dos
+# bytes por el PSG.
+#
+# Pero **NO SE EJECUTA NUNCA**, y esto esta medido, no supuesto: muestreando el
+# PC cuatro mil veces mientras la cinta carga entera (tools/omsx_muestrea.tcl)
+# solo aparecen 0xD82E-0xD831, 0xD883-0xD88C y 0xD89A-0xD8AF. En 0xD8D5 no cae
+# ni una muestra.
+#
+# Y se entiende por que: la carga de verdad NO lee bits, llama a **TAPIN del
+# BIOS** desde el puente que 0xD850 monta en la pila. Esta rutina es un
+# cargador rapido alternativo que se quedo dentro sin usarse.
+#
+# Se declara como codigo porque lo es -se lee entera y remata en `ret`-, y de
+# que no se usa se deja constancia.
+0xD8D5

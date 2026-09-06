@@ -1,0 +1,98 @@
+# ======================================================================
+# TRAILBLAZER - pieza "cargador" - anotaciones del desensamblado
+# ======================================================================
+# Cada directiva D declara un rango de datos con su nombre y con la MEDIDA de
+# la que sale. Ningun limite esta estimado a ojo.
+
+# ======================================================================
+# EL BUFER Y LA COLA
+# ======================================================================
+# 0xD8ED es el bufer de la cabecerita: cuatro bytes donde el cargador deja la
+# direccion de carga y la longitud que acaba de leer de la cinta. Lo dicen el
+# `ld ix,0d8edh / ld de,00004h` de 0xD806 y los `ld ix,(0d8edh)` y
+# `ld de,(0d8efh)` de 0xD815 y 0xD819. En la cinta viene a ceros.
+#
+# Detras hay 143 bytes que NINGUNA instruccion lee -comprobado con
+# tools/apunta.py sobre el trazado: cero referencias a 0xD8F1..0xD980-. No son
+# codigo ni tabla: son lo que quedaba en memoria cuando se grabo la cinta. Los
+# quince primeros llevan valores (0x6A 0x86 0x86 ... 0x6A) y el resto son ceros
+# con un 0xFF al final.
+D 0xd8ed 0xd8f1 bufer_de_la_cabecerita  cuatro bytes: direccion de carga y longitud de la pieza que se esta leyendo
+F 0xd8ed w
+D 0xd8f1 0xd981 cola_del_cargador  143 bytes que no lee nadie; la pieza mide 385 y el codigo acaba en 0xD8EC
+
+# ======================================================================
+# COMENTARIOS DE LINEA
+# ======================================================================
+L 0xd800 arranca
+L 0xd805 carga_la_pieza_siguiente
+L 0xd836 salta_a_lo_cargado
+L 0xd837 lee_de_la_cinta
+L 0xd883 guarda_el_byte
+L 0xd89f lee_un_byte_mas
+L 0xd8b2 remata_la_lectura
+L 0xd8d5 lee_un_bit_a_mano
+B 0xd800 EL CARGADOR: lo unico que el BIOS mete en memoria
+B 0xd837 LA LECTURA DE CINTA, Y EL PUENTE QUE SE MONTA EN LA PILA
+C 0xd800 modo 2, o sea SCREEN 2
+C 0xd805 y a partir de aqui, sin interrupciones: el BIOS de cinta las quiere quitadas
+C 0xd806 la cabecerita se lee a este bufer
+C 0xd80a cuatro bytes: direccion de carga y longitud
+C 0xd80d 0xFE es el byte de sincronismo que la abre
+C 0xd80f el acarreo puesto dice "esto es una cabecera"
+C 0xd813 si algo fallo, se vuelve a empezar por la misma
+C 0xd815 la direccion de carga que acaba de leer
+C 0xd819 y cuantos bytes vienen
+C 0xd81d el cuerpo se abre con 0xFF, no con 0xFE
+C 0xd825 y al acabar, a la direccion de carga
+C 0xd828 el `jp (hl)` de ahi al lado
+C 0xd82b y si la pieza vuelve, se espera un rato largo
+C 0xd82e 0x4000 vueltas de nada
+C 0xd833 antes de intentar la siguiente
+C 0xd836 el salto a la pieza recien cargada: la unica salida del cargador que no vuelve
+C 0xd837 otra vez, que se entra por aqui desde los dos sitios
+C 0xd838 se guardan los dos juegos de registros enteros
+C 0xd83d LO QUE HAY EN 0xFC8A..0xFCA5 SE APARTA A LA PILA: son variables del BIOS y hay que devolverlas
+C 0xd840 doce words
+C 0xd849 h vale 0xFC, que es la pagina donde va a vivir el puente
+C 0xd84c hl se queda con el SP de ahora, para poder volver
+C 0xd84d y la pila baja hasta 0xFCA4
+C 0xd850 AQUI EMPIEZA EL TRUCO: los cinco `push` siguientes no meten datos, meten CODIGO. De abajo arriba sale esto en 0xFC9A: `out (c),l / exx / call 000e1h / exx / out (c),h / ret`
+C 0xd858 y este es el `call 000E1h`, que es TAPION del BIOS
+C 0xd864 el SP viejo, para recuperarlo al final
+C 0xd866 c queda con el puerto de las ranuras
+C 0xd868 h con lo que hay puesto ahora
+C 0xd86a y l con la configuracion que deja ver la ROM del BIOS
+C 0xd86c a la pila. Y ahi esta la gracia: el puente CONMUTA LA RANURA, llama al BIOS y la devuelve. Vive en 0xFC9A porque la pagina 3 es RAM con las dos configuraciones
+C 0xd86f si TAPION no encontro el tono, se remata
+C 0xd871 y AQUI SE REESCRIBE EL PUENTE: 0xE4 en el operando del `call` lo convierte en TAPIN, o sea leer un byte
+C 0xd876 el primero
+C 0xd87b se guarda
+C 0xd87c el byte que se esperaba
+C 0xd87d si no es ese, esto no es lo que tocaba
+C 0xd881 y si lo es, a leer el cuerpo
+C 0xd883 el byte que acaba de llegar
+C 0xd884 la direccion donde va
+C 0xd888 EL FILTRO: solo se escribe si el destino esta por debajo de 0xFC8E, o sea si no pisa la zona del BIOS ni el propio puente
+C 0xd88f ni por encima de 0x0018
+C 0xd897 la direccion buena
+C 0xd898 y el byte a su sitio
+C 0xd89b el byte siguiente
+C 0xd89c un byte menos
+C 0xd89f otra llamada al puente, ya convertido en TAPIN
+C 0xd8a5 la suma de control se va llevando en b
+C 0xd8a7 y el byte bajo de lo que queda...
+C 0xd8a8 ...sale por el REGISTRO 7 del VDP: la barra de color del borde es lo que queda por cargar
+C 0xd8af mientras queden bytes
+C 0xd8b2 el acarreo, que dice si hubo error
+C 0xd8b5 y el puente se reescribe una vez mas: 0xF3 es STMOTR
+C 0xd8ba con a a cero
+C 0xd8bb o sea PARAR EL MOTOR
+C 0xd8bf el SP de antes
+C 0xd8c1 y las doce words del BIOS, de vuelta a su sitio
+C 0xd8cd los registros
+C 0xd8d2 y el acarreo sale diciendo si la lectura fue bien
+C 0xd8d5 A PARTIR DE AQUI NO SE EJECUTA NADA: es un cargador rapido que lee el bit a mano y que quedo sin usar (ver src/cargador.entries)
+C 0xd8d9 el puerto 0xA2 es por donde el PSG devuelve la entrada de casete
+C 0xd8dd y el bit 6 es el que trae la senal
+C 0xd8e5 de paso saca dos bytes por el PSG: el chasquido de la carga

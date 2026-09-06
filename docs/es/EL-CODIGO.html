@@ -1,0 +1,130 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>El código — Trailblazer (Gremlin Graphics, 1986)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Portada</a><a href="EMPEZAR.html">Empezar</a><a href="EL-JUEGO.html">El juego</a><a href="LAS-PISTAS.html">Las 14 pistas</a><a href="EL-CARTUCHO.html">El cartucho</a><a href="EL-CODIGO.html" style=color:var(--tinta)>El código</a><a href="HALLAZGOS.html">Hallazgos</a><a href="EN-EL-EMULADOR.html">En el emulador</a><a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a><a href="../THE-CODE.html" style="margin-left:auto;color:var(--oro)">English</a></nav>
+<h1 id="el-codigo">El código</h1>
+<h2 id="la-rutina-que-dibuja-la-pista-se-reescribe-a-si-misma">La rutina que dibuja la pista se reescribe a sí misma</h2>
+<p>Es el corazón del juego y merece contarse despacio.</p>
+<p>La pista en perspectiva no está dibujada en ninguna parte. El motor que la pinta —<code>0x8C11</code> hacia arriba y <code>0x8C65</code> hacia abajo— es una tira de bloques iguales:</p>
+<pre><code>ld a,e / out (099h),a      ; la dirección de VRAM
+ld a,d / out (099h),a
+ld a,000h                  ; &lt;- el byte de píxeles
+out (098h),a               ; y fuera</code></pre>
+<p>Ese <code>ld a,000h</code> <b>no lee el byte de ninguna parte: se lo escriben encima</b>. Por cada fila, <code>0x8BAE</code> saca cinco bytes de la tabla de <code>0x7800</code>, los pasa por dos tablas de traducción de 256 entradas —las que <code>0x890F</code> y <code>0x8920</code> montan en <code>0xFB00</code> y <code>0xFC00</code> repitiendo ocho bytes treinta y dos veces— y mete el resultado en los seis operandos de <code>0x8C2D</code>, <code>0x8C42</code>, <code>0x8C56</code>, <code>0x8C81</code>, <code>0x8C95</code> y <code>0xC8A9</code>.</p>
+<p>Hay un séptimo operando escrito a mano, el de <code>0x8C01</code>, que elige la página de la tabla de perspectiva. Lo escribe <code>0x8998</code> al empezar la pista.</p>
+<h2 id="la-tabla-de-la-perspectiva-no-aparece-en-ninguna-instruccion">La tabla de la perspectiva no aparece en ninguna instrucción</h2>
+<p>Los 3.570 bytes que van de <code>0xC20E</code> al final de la pieza no los apunta ningún <code>ld hl,0Cxxxh</code>. La dirección se calcula: <code>0x8C14</code> hace</p>
+<pre><code>ld a,e / and 007h / add a,a / or 0c0h / ld h,a</code></pre>
+<p>o sea <b><code>0xC0</code> más el doble de los tres bits bajos de <code>e</code></b>, que da las ocho páginas pares <code>0xC0</code>, <code>0xC2</code> … <code>0xCE</code>.</p>
+<p>Como el análisis estático se quedaba sin nada que mirar, se le preguntó a la máquina: un punto de vigilancia de openMSX sobre <code>0xC20E..0xCFFF</code> con el juego en marcha (<code>tools/omsx_quien_lee.tcl</code>) dice que la leen <b>exactamente siete sitios</b>, <code>0x9632</code> y los seis de la rutina de dibujo.</p>
+<p>Y <code>0x9629</code> usa <b>las mismas ocho páginas pares</b> para otra cosa: las copia de 256 en 256 a la RAM —saltando de dos en dos páginas con el doble <code>inc h</code> de <code>0x9639</code>— y de ahí vuelca los 0x800 a la VRAM. Los mismos bytes sirven de tabla y de patrones.</p>
+<h2 id="cinco-bandas-a-cinco-velocidades">Cinco bandas a cinco velocidades</h2>
+<p>El avance de la pista no calcula ninguna proyección. <code>0x8AD3</code> reparte la pantalla en cinco bandas y repinta cada una a un ritmo distinto:</p>
+<table><tr><th>banda</th><th>filas</th><th>se repinta</th></tr><tr><td>la de delante</td><td>32</td><td><b>dos veces</b> por paso</td></tr><tr><td>la segunda</td><td>16</td><td>una</td></tr><tr><td>la tercera</td><td>16</td><td>una de cada dos</td></tr><tr><td>la cuarta</td><td>16</td><td>una de cada cuatro</td></tr><tr><td>el horizonte</td><td>16</td><td>una de cada ocho</td></tr></table>
+<p>Cinco contadores con su máscara —<code>and 001h</code>, <code>and 003h</code>, <code>and 007h</code>— y la carretera se aleja. No hay división, ni tabla de perspectiva, ni una sola multiplicación.</p>
+<p>Y la altura de la bola se traduce a fila de pista con el mismo criterio, al revés: <code>0x8E31</code> compara contra <code>0xB3</code>, <code>0x8E</code>, <code>0x64</code> y <code>0x3E</code> y devuelve 4, 3, 2, 1 o 0.</p>
+<h2 id="catorce-pistas-que-no-guardan-casillas">Catorce pistas que no guardan casillas</h2>
+<p>Las catorce suman <b>3.494 filas</b> de cinco casillas, que serían 17.470 bytes. Ocupan <b>3.494</b>.</p>
+<p>La pieza de las pistas lleva 0x2000 bytes a la RAM en <code>0x6000</code>. De esos:</p>
+<ul><li>los <b>últimos 0x800</b> son la tabla de filas: cinco casillas por fila, una detrás de otra, y ahí es donde <code>0x8BB9</code> va a buscar con <code>fila*5 + 0x7800</code>;</li><li>los <b>0x1800 primeros</b> son las catorce pistas, y cada una es una lista de <b>índices</b> a esa tabla, cerrada con <code>0xFF</code>. Lo dice el bucle de <code>0x93A4</code>, que avanza pista a pista buscando ese <code>0xFF</code>.</li></ul>
+<p>Una pista de 219 filas ocupa 219 bytes porque las filas se repiten y basta con nombrarlas.</p>
+<h2 id="la-interrupcion-en-modo-2">La interrupción, en modo 2</h2>
+<p><code>0x88E4</code> la monta, y es de manual con un rodeo bonito:</p>
+<ol><li><code>0xFD00..0xFDFF</code> se llena con <code>0xFE</code> —257 bytes de un golpe, con el <code>ld (hl),0feh</code> y el LDIR solapado de <code>0x88EE</code>—, y <code>ld i,a</code> con <code>a</code> = <code>0xFD</code> pone ahí la tabla de vectores;</li><li>el vector que sale de esa tabla es la word de <code>0xFDFE</code>, que vale <code>0xFEFE</code>;</li><li>y en <code>0xFEFE</code> se escribe… <code>0xFB18</code>, que como instrucción es <code>jr $-5</code>;</li><li>y en <code>0xFEFB</code> se escribe <code>0xC3</code> y detrás <code>0x9134</code>: <code>jp 09134h</code>.</li></ol>
+<p>El rodeo es el truco clásico para que la tabla de 257 bytes sea <b>un solo byte repetido</b>. El destino de verdad es <code>0x9134</code>, y de ahí cuelga todo el juego: la música, los mandos, el movimiento de la bola, el avance de la pista y el pintado.</p>
+<h2 id="las-estrellas">Las estrellas</h2>
+<p>Hay dos clases, y ninguna se dibuja como un sprite.</p>
+<p>Las del <b>fondo</b> son la pantalla entera desplazándose: <code>0x9BB1</code> mueve una fila un píxel a la izquierda con <b>treinta y dos <code>rl (hl)</code> escritos uno detrás de otro, sin bucle</b>, con el acarreo pasando de un byte al siguiente. Cada ocho hay un <code>dec hl</code> en vez de un <code>dec l</code>, que es el salto a la banda de arriba. Y solo se mueven una vez de cada ocho cuadros.</p>
+<p>Las de <b>delante</b> son siete puntos con velocidad y aceleración propias (<code>0x8F65</code>), que se abren hacia los bordes como si vinieran de frente: a cada una se le suma su aceleración cada dos cuadros, y cuando se sale por el borde vuelve al centro con parámetros nuevos.</p>
+<p><b>El color de cada punto sale del registro R</b>, el contador de refresco de la DRAM, subido al nibble alto (<code>0x90DE</code>). No se decide: se toma.</p>
+<h2 id="el-dado">El dado</h2>
+<p><code>0x908E</code> no tiene tabla. Coge la semilla, la pone en el byte alto, le resta dos veces el mismo valor, cruza los dos bytes <b>y lo mezcla con el registro R</b>. Como R va cambiando con cada instrucción que se ejecuta, dos partidas no salen iguales aunque se arranque igual.</p>
+<h2 id="una-rutina-para-las-ochenta-teclas">Una rutina para las ochenta teclas</h2>
+<p><code>0xBF62</code> recibe un código de tecla. De sus tres bits bajos saca <b>el número de bit</b>, lo sube al hueco que le toca y le pega un <code>0x47</code>, que es el opcode de <code>bit 0,a</code>. Y entonces <b>lo escribe en <code>0xBF85</code></b>, que es la instrucción que va a ejecutar dos líneas más abajo.</p>
+<p>Sin tabla, sin bucle y sin ocho ramas.</p>
+<p>Lo mismo hace <code>0x9695</code> con el color de una línea de texto: escribe un <code>or</code> con el color encima de un <code>nop</code> (<code>0x9808</code>), y así el mismo bucle pinta encendido o apagado sin ninguna comparación.</p>
+<h2 id="el-texto">El texto</h2>
+<p>Todas las cadenas llevan <b>el final marcado en el bit 7</b> de la última letra. Por eso volcadas en crudo se ven pegadas unas a otras.</p>
+<p><code>(0xA41E)</code> es el puntero a la hoja de caracteres que usa la rutina de pintar (<code>0x97D3</code>). El arranque lo deja en <code>0xBA2E</code>, que es la fuente normal, y <code>0x9957</code> y <code>0x9973</code> lo cambian a otra hoja para un rótulo y lo devuelven.</p>
+<footer><p><em>Trailblazer</em> lo publico Gremlin Graphics para MSX en 1986, en cinta. El original es de <em>Mr Chip Software</em> y lo escribio Shaun Southern para el Commodore 64; esta version la firman Shaun Hollingworth, Colin Dooley, Peter Harrap, Chris Kerry y Greg Holmes. Todos los derechos sobre el juego siguen siendo de sus titulares. Este trabajo es de preservacion, estudio y documentacion, y la imagen del cartucho no se distribuye.</p></footer></div>

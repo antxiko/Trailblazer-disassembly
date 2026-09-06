@@ -1,0 +1,118 @@
+# ======================================================================
+# TRAILBLAZER - pieza "portada" - anotaciones del desensamblado
+# ======================================================================
+# Cada directiva D declara un rango de datos con su nombre y con la MEDIDA de
+# la que sale. Ningun limite esta estimado a ojo.
+
+# ======================================================================
+# LA PANTALLA DE CARGA
+# ======================================================================
+# La pieza entera son 256 bytes de codigo y 6.912 de pantalla. Lo que hace
+# 0x8800 es copiarse los 6.912 a la RAM en 0x4000 y volcarlos de ahi a la VRAM
+# con la rutina de 0x8831, que decide por la direccion de destino:
+#
+#     D < 0x40 o D >= 0x5B   no hace nada
+#     0x40 <= D < 0x58       patrones, a VRAM 0x0000 (0x1800 bytes)
+#     0x58 <= D < 0x5B       COLOR, a VRAM 0x2000 (y ahi esta el truco)
+#
+# EL COLOR VA COMPRIMIDO OCHO A UNO. En SCREEN 2 la tabla de color son 0x1800
+# bytes, uno por cada fila de cada patron. Aqui se guardan solo 0x300: **un
+# byte por patron**, porque las ocho filas de un patron llevan el mismo color.
+# 0x889C carga b=8 y escribe el mismo byte ocho veces.
+#
+# Y ademas cada byte lleva los dos colores en TRES BITS cada uno: los bits 0 a
+# 2 son la tinta y los bits 3 a 5 el papel, y 0x8883 y 0x888E los pasan por dos
+# tablas de ocho para sacar los colores de verdad. Los bits 6 y 7 no se usan.
+#
+# La paleta de ocho: negro, azul, rojo, magenta, verde, cian, amarillo y
+# blanco. Las dos tablas son la misma paleta, una en el nibble alto y otra en
+# el bajo, para poder pegarlas con un `or`.
+D 0x88ac 0x88b4 paleta_de_tinta  ocho colores en el nibble alto; la indexa 0x8883 con los bits 0 a 2
+F 0x88ac 8
+D 0x88b4 0x88bc paleta_de_papel  los mismos ocho en el nibble bajo; la indexa 0x888E con los bits 3 a 5
+F 0x88b4 8
+D 0x8900 0xa100 patrones_de_la_portada  0x1800 bytes literales; van a VRAM 0x0000 pasando por la RAM en 0x4000
+D 0xa100 0xa400 color_de_la_portada  0x300 bytes, uno por patron, con la tinta en los bits 0 a 2 y el papel en los bits 3 a 5; 0x886F los estira a los 0x1800 de la tabla de color
+D 0xa400 0xa401 cola_de_la_portada  un byte de cola que no lee nadie: la pieza mide 7169 y la pantalla acaba en 0xA400
+D 0x88bc 0x8900 cola_del_codigo_de_la_portada  68 bytes entre el final de las dos paletas y el principio de la pantalla; no los lee ninguna instruccion (cero referencias en el trazado)
+
+# LA PANTALLA LLEVA FIRMA. Dibujada desde estos bytes se lee, abajo a la
+# derecha y en letra pequena, **STEVE.** Es lo unico que hay en toda la cinta
+# con nombre de persona: ni el cargador ni el juego llevan creditos.
+#
+# Y los patrones VAN TRANSPUESTOS, que es lo que costo el primer render. El
+# bucle de 0x8855 lee ocho bytes con `inc h` -o sea saltando de 256 en 256- y
+# solo despues pasa al patron siguiente con `pop hl / inc l`. En la RAM, el
+# byte (0x4000 + fila*0x100 + patron) es la fila `fila` del patron `patron`,
+# no las ocho filas seguidas. Leido del modo obvio, la pantalla sale a ruido.
+#
+# La tabla de nombres NO viene en la pieza, y no hace falta: la pantalla usa
+# los 256 patrones de cada banda una vez cada uno, asi que la rejilla es la
+# identidad -0, 1, 2... 255 en cada tercio- y es lo que ya hay puesto.
+
+# ======================================================================
+# COMENTARIOS DE LINEA
+# ======================================================================
+L 0x8800 monta_la_portada
+L 0x8831 vuelca_a_la_vram
+L 0x8852 vuelca_un_patron
+L 0x8855 vuelca_una_fila
+L 0x886d ya_esta
+L 0x886f vuelca_el_color
+L 0x8880 estira_un_color
+B 0x8800 LA PANTALLA DE CARGA
+B 0x8831 EL VOLCADO, QUE DECIDE POR LA DIRECCION DE DESTINO
+C 0x8800 sin interrupciones mientras se toca la VRAM y las ranuras
+C 0x8801 lo que dejo el buscador de RAM en 0xFFFE: la configuracion con RAM en todas las paginas
+C 0x8804 puesta
+C 0x8806 la pantalla empieza justo detras del codigo
+C 0x8809 y se copia a la RAM en 0x4000
+C 0x880c 0x1B00 bytes: 0x1800 de patrones y 0x300 de color
+C 0x880f de un tiron
+C 0x8811 los 0x1800 de patrones
+C 0x8817 a la VRAM 0x0000: el 0x4000 del destino es la marca de escritura del VDP
+C 0x881d y los 0x300 de color
+C 0x8823 a la VRAM 0x2000, que es donde el destino 0x5800 acaba cayendo
+C 0x8829 y se devuelve la configuracion de ranuras
+C 0x882f la portada ya esta en pantalla; el cargador sigue leyendo cinta detras
+C 0x8831 el byte alto del destino decide QUE se esta volcando
+C 0x8832 por debajo de 0x4000 no hay nada que hacer
+C 0x8835 ni por encima de 0x5B00
+C 0x8838 y de 0x5800 arriba es COLOR, que va por otro camino
+C 0x883d lo demas son patrones. La direccion de VRAM se arma con los bits sueltos
+C 0x8842 el byte bajo, subido tres bits
+C 0x8845 se guarda a medias
+C 0x8846 los tres que se van arriba
+C 0x884d y fuera los dos bytes de la direccion
+C 0x8852 la direccion del patron, que se recupera en cada vuelta
+C 0x8853 ocho filas
+C 0x8855 la fila
+C 0x8856 al puerto de datos del VDP
+C 0x8858 Y AQUI ESTA LA TRANSPOSICION: `inc h`, no `inc hl`. Las ocho filas de un patron estan separadas 256 bytes, o sea que en la RAM se guarda por FILAS DE PANTALLA, no por patron
+C 0x8859 un byte menos
+C 0x885c y si se acabaron, fuera
+C 0x885e las ocho filas
+C 0x8861 la direccion del patron
+C 0x8862 y el patron siguiente
+C 0x8863 mientras l no de la vuelta, o sea 256 patrones
+C 0x8865 y cuando la da, ocho paginas mas alla
+C 0x8869 hasta 0x5800, que son las tres bandas de la pantalla
+C 0x886f el destino, a hl
+C 0x8870 de 0x58, 0x59 o 0x5A solo interesan los dos bits bajos
+C 0x8874 por ocho, que es lo que crece la tabla de color por cada patron
+C 0x8877 fuera el byte bajo
+C 0x887b y el alto con el 0x60 de escribir en 0x2000
+C 0x887f el origen, de vuelta a hl
+C 0x8880 el byte de color comprimido
+C 0x8881 al otro juego de registros, que bc lleva la cuenta
+C 0x8882 se guarda entero
+C 0x8883 LOS TRES BITS BAJOS SON LA TINTA
+C 0x8888 y salen por la paleta de 0x88AC, que los da en el nibble alto
+C 0x888d el byte otra vez
+C 0x888e LOS TRES SIGUIENTES SON EL PAPEL
+C 0x8896 por la paleta de 0x88B4, que los da en el nibble bajo
+C 0x889b pegados, ya es un color del MSX
+C 0x889c Y SE ESCRIBE OCHO VECES: las ocho filas del patron llevan el mismo color, y por eso caben 0x300 bytes donde el VDP quiere 0x1800
+C 0x88a0 dos `nop` para no ir mas rapido de lo que el VDP admite
+C 0x88a5 el byte siguiente
+C 0x88a9 hasta acabar los 0x300

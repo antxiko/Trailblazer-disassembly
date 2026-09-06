@@ -1,0 +1,6 @@
+# Puntos de entrada de la pieza "datos".
+#
+# El cargador de 0xD800 salta a la direccion de carga en cuanto termina de
+# leerla (el `jp (hl)` de 0xD836 con hl desde 0xD8ED), asi que el primer byte
+# de la pieza es codigo.
+0x8800

@@ -1,0 +1,141 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hallazgos — Trailblazer (Gremlin Graphics, 1986)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Portada</a><a href="EMPEZAR.html">Empezar</a><a href="EL-JUEGO.html">El juego</a><a href="LAS-PISTAS.html">Las 14 pistas</a><a href="EL-CARTUCHO.html">El cartucho</a><a href="EL-CODIGO.html">El código</a><a href="HALLAZGOS.html" style=color:var(--tinta)>Hallazgos</a><a href="EN-EL-EMULADOR.html">En el emulador</a><a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a><a href="../FINDINGS.html" style="margin-left:auto;color:var(--oro)">English</a></nav>
+<h1 id="hallazgos">Hallazgos</h1>
+<h2 id="el-cargador-no-lee-la-cinta-monta-un-puente-en-la-pila">El cargador no lee la cinta: monta un puente en la pila</h2>
+<p>El BIOS del MSX solo carga la primera pieza, la de <code>0xD800</code>. Las otras cuatro las lee ella, y lo hace con un truco.</p>
+<p><code>0xD850</code> pone la pila en <code>0xFCA4</code> y empuja <b>cinco words que no son datos sino instrucciones</b>: <code>0xC961</code>, <code>0xEDD9</code>, <code>0x00E1</code>, <code>0xCDD9</code> y <code>0x69ED</code>. Lo que queda escrito en <code>0xFC9A</code> es esto:</p>
+<pre><code>FC9A  ED 69     out (c),l     ; c = 0xA8: conmuta la ranura
+FC9C  D9        exx
+FC9D  CD E1 00  call 000E1h   ; TAPION del BIOS
+FCA0  D9        exx
+FCA1  ED 61     out (c),h     ; y devuelve la ranura que había
+FCA3  C9        ret</code></pre>
+<p>Y luego lo llama con <code>call 0fc9ah</code>.</p>
+<p><b>¿Por qué en la pila?</b> Porque el juego necesita RAM en todas las páginas, pero para leer cinta hace falta la ROM del BIOS. El puente tiene que vivir en un sitio que esté visible con las dos configuraciones, y la página 3 es RAM siempre. Antes de montarlo, <code>0xD83D</code> guarda lo que había ahí —doce words de variables del BIOS— y <code>0xD8C1</code> las devuelve al acabar.</p>
+<p>Y el mismo puente sirve para tres llamadas distintas, porque <b>se reescribe</b>:</p>
+<ul><li>arranca con <code>call 000E1h</code>, que es <b>TAPION</b>: enciende el motor y espera el tono de cabecera;</li><li><code>0xD871</code> mete un <code>0xE4</code> en el operando y lo convierte en <b>TAPIN</b>, para leer los bytes;</li><li><code>0xD8B5</code> mete un <code>0xF3</code> y lo convierte en <b>STMOTR</b> con <code>a</code> a cero, o sea parar el motor.</li></ul>
+<h2 id="hay-un-cargador-rapido-que-no-se-usa">Hay un cargador rápido que no se usa</h2>
+<p>En <code>0xD8D5</code> hay una rutina que lee el bit de la cinta <b>a mano</b>: espera el flanco del puerto <code>0xA2</code>, que es por donde el PSG devuelve la entrada de casete, y de paso saca dos bytes por el PSG.</p>
+<p><b>No se ejecuta nunca.</b> Y eso está medido, no supuesto: muestreando el PC cuatro mil veces mientras la cinta carga entera (<code>tools/omsx_muestrea.tcl</code>) solo aparecen <code>0xD82E-0xD831</code>, <code>0xD883-0xD88C</code> y <code>0xD89A-0xD8AF</code>. En <code>0xD8D5</code> no cae ni una muestra.</p>
+<p>Es un cargador rápido que se quedó dentro sin usarse.</p>
+<h2 id="la-barra-de-carga-es-el-borde-de-la-pantalla">La barra de carga es el borde de la pantalla</h2>
+<p>Mientras lee, <code>0xD8A7</code> saca el byte bajo de lo que queda por <b>el registro 7 del VDP</b>. No hay barra dibujada ni casillas que pintar: el color del borde va cambiando solo, y eso es todo el indicador de progreso.</p>
+<h2 id="la-rutina-que-dibuja-la-pista-se-reescribe-a-si-misma">La rutina que dibuja la pista se reescribe a sí misma</h2>
+<p>Contado entero en <a href="EL-CODIGO.html">El código</a>. En resumen: los <code>ld a,000h</code> que sacan los píxeles por el puerto del VDP <b>no leen nada</b>; una rutina anterior les escribe el valor dentro de la instrucción, fila a fila.</p>
+<p>Son <b>siete operandos</b> escritos a mano en la misma rutina de dibujo. Y hay dos más en otros sitios: el volumen del canal de sonido (<code>0x81CF</code> sobre <code>0x81C6</code>) y el color de una línea de texto (<code>0x9695</code> sobre un <code>nop</code> de <code>0x9808</code>).</p>
+<h2 id="una-sola-rutina-mira-las-ochenta-teclas">Una sola rutina mira las ochenta teclas</h2>
+<p><code>0xBF62</code> <b>fabrica el opcode</b>: de los tres bits bajos del código de tecla saca el número de bit, lo sube al hueco que le toca, le pega un <code>0x47</code> —que es <code>bit 0,a</code>— y escribe el resultado en <code>0xBF85</code>, la instrucción que ejecuta dos líneas más abajo.</p>
+<h2 id="catorce-pistas-en-3-494-bytes">Catorce pistas en 3.494 bytes</h2>
+<p>Las catorce suman 3.494 filas de cinco casillas. Ocupan 3.494 bytes, uno por fila, porque <b>no guardan casillas sino índices</b> a una tabla de filas que vive en los últimos 0x800 bytes de la carga.</p>
+<p>Se ven todas, dibujadas desde esos bytes, en <a href="LAS-PISTAS.html">Las 14 pistas</a>.</p>
+<h2 id="el-color-de-la-pantalla-de-carga-va-comprimido-ocho-a-uno">El color de la pantalla de carga va comprimido ocho a uno</h2>
+<p>En SCREEN 2 la tabla de color son 0x1800 bytes. La pantalla de carga guarda <b>0x300</b>: un byte por patrón, porque las ocho filas llevan el mismo color, y <code>0x889C</code> lo escribe ocho veces seguidas.</p>
+<p>Y dentro de ese byte caben los dos colores: los <b>bits 0 a 2 son la tinta</b> y los <b>3 a 5 el papel</b>, índices de una paleta de ocho que está dos veces —una en el nibble alto y otra en el bajo— para poder pegarlos con un <code>or</code>. Los bits 6 y 7 no se usan.</p>
+<p><b>La misma paleta está en el juego</b>, en <code>0x9593</code>, byte por byte, aunque sean piezas distintas de la cinta.</p>
+<h2 id="los-patrones-van-transpuestos">Los patrones van transpuestos</h2>
+<p>El bucle que vuelca los patrones a la VRAM lee ocho bytes con <code>inc h</code>, no con <code>inc hl</code>: <b>saltando de 256 en 256</b>. Y solo después pasa al patrón siguiente.</p>
+<p>O sea que el byte <code>(base + fila*0x100 + patrón)</code> es la fila <code>fila</code> del patrón <code>patrón</code>, y no las ocho filas seguidas. Leído del modo obvio, la pantalla de carga sale a ruido. Pasa en la pantalla de carga (<code>0x8858</code>), en el juego (<code>0x9522</code>) y en el búfer del rótulo que desfila (<code>0x961A</code>).</p>
+<h2 id="el-color-de-las-estrellas-sale-del-registro-r">El color de las estrellas sale del registro R</h2>
+<p><code>0x90DE</code> toma el contador de refresco de la DRAM, lo sube al nibble alto y lo escribe en la tabla de color. Cada estrella sale del color que toque, sin gastar un byte en decidirlo. Y el generador de números al azar de <code>0x908E</code> hace lo mismo: mezcla su semilla con R, así que dos partidas no salen iguales aunque se arranque igual.</p>
+<h2 id="el-juego-dice-quien-lo-hizo">El juego dice quién lo hizo</h2>
+<p>El rótulo que desfila en el título —de <code>0x9E69</code> a <code>0xA29D</code>— da los créditos enteros:</p>
+<blockquote>Welcome to Trailblazer.......... (c) Mr Chip 1986........This amazing version written by SHAUN HOLLINGWORTH, COLIN DOOLEY, PETER HARRAP, CHRIS KERRY and GREG HOLMES (too pey?) of Gremlin Graphics Software Limited........Originally created by Shaun Southern on the Commodore.....Game play and some graphic bits by Terry LLoyd (yaki da!) and P.Harrap.</blockquote>
+<p>Y sigue con las teclas —<b>Q-Left, W-right, P-Up, L-Down and Space to jump</b>—, con una queja sobre lo difíciles que son los niveles, con un <em>P.S don&#x27;t forget to read the P.S OK or you&#x27;ll be sorry!</em> y con un <b>Hello Mum!</b> al final.</p>
+<h2 id="las-pistas-llevan-el-nombre-de-quien-las-hizo">Las pistas llevan el nombre de quien las hizo</h2>
+<p>Los catorce nombres, en <code>0xA4CB</code>:</p>
+<p>EASY GOING · WOOLY JUMPER · <b>TERRY&#x27;S TEST</b> · <b>PETE STREET</b> · HACKERS EVIL HOLES · <b>GREG THE NIPPER</b> · <b>SHAUN NOT SEAN!!</b> · JASON&#x27;S JUMPABOUT · MARK&#x27;S MOTOROLA · <b>CHRIS&#x27;S CUL-DE-SAC</b> · WELL I NEVER · SHRIGGLES&#x27;S SHRIGGLE · BOING BOING SPLAT!! · LAST BUT NOT LEAST!</p>
+<p>Terry Lloyd, Pete Harrap, Greg Holmes, Shaun Hollingworth y Chris Kerry salen todos en los créditos.</p>
+<h2 id="el-modo-de-trampas-existe">El modo de trampas existe</h2>
+<p>El rótulo bromea con que <em>there may be a Cheat mode but I doubt it</em>. Lo hay: en <code>0x9CE6</code> está su cartel, <b>FOOLED YOU!    YOU ARE NOW IN CHEAT MODE</b>, pegado al copyright de Gremlin.</p>
+<p>Cómo se entra es una <a href="PREGUNTAS-ABIERTAS.html">pregunta abierta</a>.</p>
+<h2 id="dos-kilobytes-de-memoria-vieja-grabados-en-la-cinta">Dos kilobytes de memoria vieja, grabados en la cinta</h2>
+<p>La pieza que trae las pistas mide 10.240 bytes pero <b>solo usa la mitad de arriba</b>: lo único que hace su código es llevar los 0x2000 de <code>0x9000</code> a la RAM en <code>0x6000</code>, y el juego, que se carga después, pisa <code>0x8800..0x9000</code> sin que nadie lo haya leído.</p>
+<p>Y se sabe de dónde salen esos dos kilobytes: <b>231 bytes seguidos, de <code>0x8815</code> a <code>0x88FC</code>, son idénticos a los que el juego trae para esas mismas direcciones</b>, y detrás sigue, byte a byte, el mismo código de arranque. De los 2.048, la mitad justa coinciden con el juego.</p>
+<p>El que grabó la cinta volcó <code>0x8800..0xB000</code> de un tirón porque lo que le importaba era <code>0x9000..0xB000</code>, y se llevó de propina dos kilobytes del juego que ya estaban en memoria.</p>
+<p>Lo mismo pasa, más pequeño, con las colas del cargador (143 bytes) y del buscador de RAM (175): ninguna instrucción las lee.</p>
+<h2 id="la-pantalla-de-carga-lleva-firma">La pantalla de carga lleva firma</h2>
+<p><b>STEVE.</b>, abajo a la derecha y en letra pequeña. Es lo único de toda la cinta con nombre de persona que no esté en el rótulo que desfila.</p>
+<footer><p><em>Trailblazer</em> lo publico Gremlin Graphics para MSX en 1986, en cinta. El original es de <em>Mr Chip Software</em> y lo escribio Shaun Southern para el Commodore 64; esta version la firman Shaun Hollingworth, Colin Dooley, Peter Harrap, Chris Kerry y Greg Holmes. Todos los derechos sobre el juego siguen siendo de sus titulares. Este trabajo es de preservacion, estudio y documentacion, y la imagen del cartucho no se distribuye.</p></footer></div>

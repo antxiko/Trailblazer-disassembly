@@ -1,0 +1,65 @@
+# Puntos de entrada de la pieza "juego".
+#
+# El cargador de 0xD800 salta a la direccion de carga en cuanto termina de
+# leerla (el `jp (hl)` de 0xD836 con hl desde 0xD8ED), asi que el primer byte
+# de la pieza es codigo.
+0x80E8
+
+# LA RUTINA DE INTERRUPCION, en modo 2. No se alcanza por ningun salto: la
+# llama el hardware. El montaje esta en 0x88E4 y es de manual:
+#
+#   - 0xFD00..0xFDFF se llena con 0xFE (257 bytes de un golpe, con el `ld
+#     (hl),0feh` y el LDIR solapado de 0x88EE), y `ld i,a` con a=0xFD pone ahi
+#     la tabla de vectores;
+#   - el vector que sale de esa tabla es la word de 0xFDFE, que vale 0xFEFE;
+#   - y en 0xFEFE se escribe... 0xFB18, que como instruccion es `jr $-5`, o sea
+#     un salto a 0xFEFB;
+#   - y en 0xFEFB se escribe 0xC3 y detras 0x9134: `jp 09134h`.
+#
+# El rodeo es el truco clasico para que la tabla de 257 bytes sea un solo byte
+# repetido. El destino de verdad es este.
+0x9134
+
+# LAS TRES DIRECCIONES DE VUELTA QUE SE EMPUJAN A MANO.
+#
+# El juego usa el `ld hl,nnnn / push hl` para decidir a donde ira a parar el
+# `ret` de la rutina que llama despues. No es un `call`, asi que el trazador no
+# lo sigue solo, pero el destino esta escrito en la instruccion y no hay nada
+# que adivinar. Los tres, con quien los empuja:
+#
+#   0x8E31 empuja 0x8E4B      0x9284 empuja 0x92E7      0x92AA empuja 0x92D1
+#
+# Los dos primeros estan ademas COMPROBADOS EN LA MAQUINA: con un punto de
+# ruptura en 0x8E4B y en 0x92D1 y el juego en marcha, se entra en los dos
+# (tools/omsx_quien_llama.tcl).
+0x8E4B
+0x92D1
+0x92E7
+
+# SEIS RUTINAS A LAS QUE NO SE HA ENCONTRADO QUIEN LLAMA.
+#
+# Las seis desensamblan como rutinas completas y coherentes -empiezan por una
+# instruccion valida, tocan las mismas variables que el resto del juego y
+# rematan en `ret`-, pero:
+#
+#   - no aparecen en ningun `call`, `jp`, `ld hl,` ni como word suelta en los
+#     20.248 bytes de la pieza;
+#   - no hay ningun salto relativo del codigo ya trazado que caiga en ellas;
+#   - y con puntos de ruptura en la maquina y el juego en marcha noventa
+#     segundos (tools/omsx_quien_llama.tcl) NO se entra en ninguna.
+#
+# O son de pantallas que la prueba no llego a tocar -el fin de partida, la
+# tabla de records, el modo de trampas- o son codigo muerto. Se declaran como
+# codigo porque lo son; de donde se llega a ellas queda en PREGUNTAS ABIERTAS.
+0x81A5
+0x8CBE
+0x93DC
+0x9722
+0x973F
+0x9DAD
+
+# Y dos mas del mismo tipo, que salieron al retrazar con las anteriores:
+# 0x8CE0 es la rutina GEMELA de 0x8CBE -la misma cuenta pero sobre `de` en vez
+# de sobre `hl`, byte a byte-, y 0x9746 es la rama corta del `jr` de 0x9744.
+0x8CE0
+0x9746

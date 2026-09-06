@@ -1,0 +1,7 @@
+# Zonas del cargador que NO son codigo.
+#
+# 0xD8ED..0xD8F1: el bufer de cuatro bytes donde el cargador deja la cabecerita
+# que acaba de leer -direccion de carga y longitud-, mas el byte que sigue. Lo
+# dicen el `ld ix,0d8edh / ld de,00004h` de 0xD806 y los dos `ld ..,(0d8edh)`
+# y `ld ..,(0d8efh)` de 0xD815 y 0xD819. En la cinta viene a ceros.
+0xD8ED 0xD981

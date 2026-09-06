@@ -1,0 +1,41 @@
+# ======================================================================
+# TRAILBLAZER - pieza "datos" - anotaciones del desensamblado
+# ======================================================================
+# Cada directiva D declara un rango de datos con su nombre y con la MEDIDA de
+# la que sale. Ningun limite esta estimado a ojo.
+
+# ======================================================================
+# LOS OCHO KILOBYTES QUE VAN A 0x6000, Y LOS DOS QUE NO VAN A NINGUNA PARTE
+# ======================================================================
+# La pieza son 21 bytes de codigo y 10.219 de datos, pero **solo se usa la
+# mitad de arriba**. Lo unico que hace el codigo es el LDIR de 0x880E, que
+# lleva los 0x2000 bytes de 0x9000 a la RAM en 0x6000. Y en cuanto acaba, la
+# pieza siguiente -el juego, que se carga en 0x80E8..0xCFFF- pasa por encima de
+# 0x8800..0x9000 y lo borra.
+#
+# **Los 2.048 primeros bytes de esta pieza no los lee nadie.** Y se puede decir
+# de donde salen: son lo que habia en la memoria de la maquina donde se grabo
+# la cinta. La prueba es que **231 bytes seguidos, de 0x8815 a 0x88FC, son
+# IDENTICOS a los que el juego trae para esas mismas direcciones** -sus textos
+# y sus tablas- y detras sigue, byte a byte, el mismo codigo de arranque que el
+# juego tiene en 0x88FB. De los 2.048, la mitad justa (1.080) coinciden con el
+# juego.
+#
+# O sea: el que hizo la cinta volco 0x8800..0xB000 de un tiron porque lo que le
+# importaba era 0x9000..0xB000, y de propina se llevo dos kilobytes del juego
+# que ya estaban cargados.
+D 0x8800 0x9000 memoria_vieja_que_no_lee_nadie  2048 bytes que la pieza carga y el juego pisa sin haberlos leido; son un trozo del propio juego que estaba en memoria al grabar la cinta (231 bytes seguidos identicos a los suyos desde 0x8815)
+D 0x9000 0xb000 carga_de_0x6000  los 0x2000 bytes que el LDIR de 0x880E lleva a la RAM en 0x6000, que es lo unico que esta pieza aporta de verdad
+
+# ======================================================================
+# COMENTARIOS DE LINEA
+# ======================================================================
+L 0x8800 lleva_los_datos_a_0x6000
+B 0x8800 LO UNICO QUE HACE ESTA PIEZA
+C 0x8800 la configuracion con RAM en todas las paginas, que dejo el buscador
+C 0x8803 puesta
+C 0x8805 ocho kilobytes
+C 0x8808 a 0x6000, que es adonde el juego va a ir a buscarlos
+C 0x880b desde la mitad de arriba de esta misma pieza
+C 0x880e y ya esta: los 2048 bytes de abajo no se leen nunca, y el juego los pisa al cargarse
+C 0x8810 se devuelve la configuracion de ranuras

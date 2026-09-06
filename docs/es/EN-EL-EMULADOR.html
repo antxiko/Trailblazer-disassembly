@@ -1,0 +1,126 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>En el emulador — Trailblazer (Gremlin Graphics, 1986)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Portada</a><a href="EMPEZAR.html">Empezar</a><a href="EL-JUEGO.html">El juego</a><a href="LAS-PISTAS.html">Las 14 pistas</a><a href="EL-CARTUCHO.html">El cartucho</a><a href="EL-CODIGO.html">El código</a><a href="HALLAZGOS.html">Hallazgos</a><a href="EN-EL-EMULADOR.html" style=color:var(--tinta)>En el emulador</a><a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a><a href="../IN-THE-EMULATOR.html" style="margin-left:auto;color:var(--oro)">English</a></nav>
+<h1 id="en-el-emulador">En el emulador</h1>
+<p>Aquí el emulador no es un adorno: es una <b>herramienta de medida</b>, y tres cosas de este desensamblado no se habrían cerrado sin él.</p>
+<h2 id="cargar-la-cinta-y-volcarlo-todo">Cargar la cinta y volcarlo todo</h2>
+<pre><code>make emulador</code></pre>
+<p>Mete la cinta en openMSX, teclea <code>BLOAD&quot;CAS:&quot;,R</code>, espera a que el PC lleve ocho segundos dentro de <code>0x80E8..0xCFFF</code> y vuelca la VRAM, los 64 KB de RAM <b>y los ocho registros del VDP</b>. Después entra en el menú y arranca una partida, y vuelve a volcar.</p>
+<p>Tarda unos 190 segundos emulados: son 38 KB de cinta a 1200 baudios, aunque emulados a toda velocidad.</p>
+<h2 id="el-teclado-no-se-lee-con-la-bios">El teclado no se lee con la BIOS</h2>
+<p>Y eso importa para automatizarlo. El <code>type</code> de openMSX inyecta la pulsación por donde la lee el BASIC, y este juego <b>lee el teclado a mano por el PPI</b> (<code>0xBF17</code> y <code>0xBF62</code>). La tecla que inyecta el BASIC dura menos que su barrido y no se entera.</p>
+<p>La salida es apretar la tecla <b>en la matriz</b> y mantenerla medio segundo:</p>
+<pre><code>keymatrixdown 8 0x01          ; espacio
+after time 0.5 {keymatrixup 8 0x01}</code></pre>
+<p>El propio juego dice qué hay que pulsar: <em>Press any key for options</em> primero, y ya en el menú, <code>3 : Play the game</code>.</p>
+<h2 id="de-ahi-salio-la-geometria-de-pantalla">De ahí salió la geometría de pantalla</h2>
+<pre><code>R0 = 0x02   modo 2 (SCREEN 2)
+R1 = 0xE2   16 KB, pantalla on, interrupción on, sprites 16x16
+R2 = 0x06   nombres             en 0x1800
+R3 = 0xFF   colores   base 0x2000, máscara 0x1FFF
+R4 = 0x03   patrones  base 0x0000, máscara 0x1FFF
+R5 = 0x36   atributos de sprite en 0x1B00
+R6 = 0x07   patrones de sprite  en 0x3800
+R7 = 0x01   borde negro</code></pre>
+<p>Medirla y no suponerla no es manía: la primera lectura de este desensamblado daba los volcados a <code>0x1800</code> por tabla de color, y son <b>la tabla de nombres</b>. Con la geometría equivocada, los dibujos salen bien de forma y mal de sitio, y eso no se ve mirándolos.</p>
+<h2 id="quien-toca-una-zona-de-memoria">Quién toca una zona de memoria</h2>
+<pre><code>tools/omsx_quien_lee.tcl</code></pre>
+<p>Pone un punto de vigilancia sobre un rango y anota el PC de cada lectura o escritura. Se usa cuando el análisis estático se queda sin nada que mirar: cuando la dirección <b>se calcula</b> y no aparece escrita en ninguna instrucción.</p>
+<p>Con esto se cerró la <b>tabla de la perspectiva</b>. Los 3.570 bytes que van de <code>0xC20E</code> al final no los apunta ningún <code>ld hl,0Cxxxh</code>, y no hay forma de encontrarlos leyendo. Vigilando la zona con el juego en marcha salieron <b>exactamente siete sitios</b>: <code>0x9632</code> y los seis de la rutina de dibujo.</p>
+<h2 id="quien-entra-en-una-rutina">Quién entra en una rutina</h2>
+<pre><code>tools/omsx_quien_llama.tcl</code></pre>
+<p>Punto de ruptura en la rutina y a ver quién ha dejado la dirección de vuelta en la pila. Se usó con seis rutinas a las que no llama nadie de forma visible: no aparecen en ningún <code>call</code>, <code>jp</code> ni <code>ld hl,</code>, ni hay saltos relativos del código trazado que caigan en ellas.</p>
+<p>De las seis, <b>ninguna se ejecutó</b> en noventa segundos de partida. O son de pantallas que la prueba no llegó a tocar —el fin de partida, la tabla de récords, el modo de trampas— o son código muerto. Está en <a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a>.</p>
+<p>También sirvió para lo contrario: confirmar que <code>0x8E4B</code> y <code>0x92D1</code>, a las que se llega por un <code>ld hl,nn / push hl</code> y no por un <code>call</code>, <b>sí se ejecutan</b>.</p>
+<h2 id="que-trozos-del-cargador-corren-de-verdad">Qué trozos del cargador corren de verdad</h2>
+<pre><code>tools/omsx_muestrea.tcl</code></pre>
+<p>Cuatro mil muestras del PC mientras la cinta carga entera. No es tan exacto como un punto de ruptura, pero para separar el código vivo del que no se toca nunca sobra.</p>
+<p>Con esto se descubrió que la rutina de <code>0xD8D5</code> —la que lee el bit de la cinta a mano por el puerto <code>0xA2</code>— <b>no se ejecuta en ningún momento</b>: la carga de verdad llama a TAPIN del BIOS. Es un cargador rápido que se quedó dentro.</p>
+<h2 id="y-una-afirmacion-que-hubo-que-retirar">Y una afirmación que hubo que retirar</h2>
+<p>Antes de esa medida, este desensamblado decía que el cargador «se fabrica su rutina de lectura en la pila y saca el bit del puerto 0xA2 a mano». Media afirmación era cierta —el puente en la pila está ahí— y la otra media, falsa: el puente no lee bits, <b>llama al BIOS</b>, y la rutina que lee bits no se usa.</p>
+<p>Se corrigió en cuanto la máquina lo dijo.</p>
+<h2 id="trampas-de-tcl-ya-pagadas-en-esta-serie">Trampas de Tcl ya pagadas en esta serie</h2>
+<ul><li>Nada de corchetes dentro de un <code>format</code>.</li><li>El fichero binario, con <code>-translation binary</code>.</li><li><code>debug read_block</code>, que <code>debug save_to_file</code> no existe.</li><li>Y en un manejador de punto de vigilancia, cuidado con leer variables que quizá no existan: la excepción se traga en silencio y el contador sube sin que se escriba nada en el registro.</li></ul>
+<footer><p><em>Trailblazer</em> lo publico Gremlin Graphics para MSX en 1986, en cinta. El original es de <em>Mr Chip Software</em> y lo escribio Shaun Southern para el Commodore 64; esta version la firman Shaun Hollingworth, Colin Dooley, Peter Harrap, Chris Kerry y Greg Holmes. Todos los derechos sobre el juego siguen siendo de sus titulares. Este trabajo es de preservacion, estudio y documentacion, y la imagen del cartucho no se distribuye.</p></footer></div>
