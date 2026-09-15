@@ -9,9 +9,9 @@ reassembling the five pieces and wrapping them back up gives the `.cas`
 **byte for byte**.
 
     explained          38,299 of 38,299   100 %
-    comment density     1,118 of 3,637    30.7 %
+    comment density     1,119 of 3,637    30.8 %
     routines below 10 %       0 of 355
-    tests                    40, green
+    tests                    43, green
     reassembly         same sha256 as the tape
 
 ## What is here
@@ -20,7 +20,7 @@ reassembling the five pieces and wrapping them back up gives the `.cas`
     src/*.notes              the comments and data blocks, with their measure
     src/*.entries            the entry points that cannot be deduced statically
     tools/                   trace, listing, pictures, and three emulator probes
-    tests/                   40 checks that do not need the tape
+    tests/                   43 checks that do not need the tape
     docs/                    the bilingual website
 
 ## The tape is not here

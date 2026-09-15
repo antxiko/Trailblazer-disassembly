@@ -9,9 +9,9 @@ reensamblar las cinco piezas y volver a envolverlas devuelve el `.cas`
 **byte a byte**.
 
     explicado          38.299 de 38.299   100 %
-    densidad            1.118 de 3.637    30,7 %
+    densidad            1.119 de 3.637    30,8 %
     rutinas bajo el 10 %      0 de 355
-    tests                    40, en verde
+    tests                    43, en verde
     reensamblado       el mismo sha256 que la cinta
 
 ## Qué hay aquí
@@ -20,7 +20,7 @@ reensamblar las cinco piezas y volver a envolverlas devuelve el `.cas`
     src/*.notes              los comentarios y los bloques de datos, con su medida
     src/*.entries            los puntos de entrada que no se deducen solos
     tools/                   trazado, listados, dibujos y tres sondas de emulador
-    tests/                   40 comprobaciones que no necesitan la cinta
+    tests/                   43 comprobaciones que no necesitan la cinta
     docs/                    la web bilingüe
 
 ## La cinta no está aquí

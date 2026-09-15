@@ -60,7 +60,7 @@ cinta no cuadra.
     make densidad
 
     0 rutinas por debajo del 10 %, de 355
-    en total: 3637 instrucciones, 1118 comentarios, 30,7 %
+    en total: 3637 instrucciones, 1119 comentarios, 30,8 %
 
 ## Las imágenes
 
