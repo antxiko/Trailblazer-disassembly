@@ -60,7 +60,7 @@ model of the tape does not add up.
     make densidad
 
     0 routines below 10 %, out of 355
-    in total: 3637 instructions, 1119 comments, 30.8 %
+    in total: 3637 instructions, 1120 comments, 30.8 %
 
 ## The pictures
 

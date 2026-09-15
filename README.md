@@ -9,7 +9,7 @@ reassembling the five pieces and wrapping them back up gives the `.cas`
 **byte for byte**.
 
     explained          38,299 of 38,299   100 %
-    comment density     1,119 of 3,637    30.8 %
+    comment density     1,120 of 3,637    30.8 %
     routines below 10 %       0 of 355
     tests                    43, green
     reassembly         same sha256 as the tape

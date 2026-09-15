@@ -9,7 +9,7 @@ reensamblar las cinco piezas y volver a envolverlas devuelve el `.cas`
 **byte a byte**.
 
     explicado          38.299 de 38.299   100 %
-    densidad            1.119 de 3.637    30,8 %
+    densidad            1.120 de 3.637    30,8 %
     rutinas bajo el 10 %      0 de 355
     tests                    43, en verde
     reensamblado       el mismo sha256 que la cinta

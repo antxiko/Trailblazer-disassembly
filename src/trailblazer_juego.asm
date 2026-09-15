@@ -936,7 +936,7 @@ fila_del_fondo:
 	add a,003h		;8b86   ; y tres filas de pantalla mas abajo
 	jp pinta_una_fila_de_pista		;8b88
 fila_del_horizonte:
-	ld a,(08684h)		;8b8b   ; la del horizonte, una de cada ocho
+	ld a,(08684h)		;8b8b   ; y la del horizonte, una de cada ocho
 	inc a			;8b8e   ; la del fondo
 	and 00fh		;8b8f
 	ld c,a			;8b91
@@ -1182,7 +1182,7 @@ cambia_de_banda_hl:
 	ld h,000h		;8cdd
 	ret			;8cdf
 sube_una_fila_de:
-	dec d			;8ce0   ; igual que 0x8CBE pero sobre `de`
+	dec d			;8ce0   ; igual que 0x8CBE pero sobre `de`, byte a byte: dos rutinas gemelas porque el bucle de dibujo usa los dos pares
 	ld a,e			;8ce1
 	cpl			;8ce2
 	and 0e0h		;8ce3
@@ -1519,7 +1519,7 @@ L_8EC0:
 	ld a,l			;8ec0   ; la direccion, otra vez
 	out (099h),a		;8ec1
 	ld a,h			;8ec3
-	set 5,a		;8ec4   ; con el bit 5 que la lleva al color
+	set 5,a		;8ec4   ; el bit 5 lleva la direccion a la tabla de COLOR
 	out (099h),a		;8ec6
 	ld de,08e2dh		;8ec8   ; el bufer de cuatro bytes
 	ld a,l			;8ecb
@@ -1727,7 +1727,7 @@ coloca_una_estrella:
 	call numero_al_azar		;9023   ; la columna, al azar
 	and 03fh		;9026   ; en 64 sitios
 	add a,060h		;9028   ; desde 0x60
-	cp 073h		;902a   ; el agujero del centro de la pantalla
+	cp 073h		;902a   ; si cae en el agujero del centro de la pantalla
 	jr c,L_903A		;902c
 	cp 08ch		;902e
 	jr nc,L_903A		;9030
@@ -2088,7 +2088,7 @@ sale_de_la_interrupcion:
 	or a			;926c
 	ld de,(0838fh)		;926d
 	call nz,toca_el_canal_2		;9271
-	pop iy		;9274   ; y de vuelta
+	pop iy		;9274   ; los registros, de vuelta
 	pop ix		;9276
 	pop bc			;9278
 	pop de			;9279
@@ -2130,7 +2130,7 @@ baja_el_reloj:
 	ld (hl),009h		;92a4
 	ret			;92a6
 L_92A7:
-	call sube_el_reloj		;92a7   ; el reloj sube
+	call sube_el_reloj		;92a7   ; el reloj sube, hacia adelante: en la partida entera el tiempo se suma
 	ld hl,mira_si_se_acabo_el_tiempo		;92aa   ; con la vuelta empujada tambien
 	push hl			;92ad
 	ld hl,08669h		;92ae
@@ -2412,7 +2412,7 @@ pinta_el_marcador:
 	add hl,de			;9464
 	ld b,h			;9465   ; la linea de la tabla
 	ld c,l			;9466
-	ld de,0866ch		;9467
+	ld de,0866ch		;9467   ; y sus diez bytes
 	ex de,hl			;946a
 	ld a,(de)			;946b
 	sub 030h		;946c
@@ -2547,7 +2547,7 @@ arma_la_direccion:
 	ld a,d			;953f   ; el resto del byte alto
 	and 0f8h		;9540
 	ld d,a			;9542
-	ld a,e			;9543   ; el byte bajo, subido tres
+	ld a,e			;9543   ; el byte bajo, subido tres bits: es la cuenta del entrelazado de SCREEN 2
 	rlca			;9544
 	rlca			;9545
 	rlca			;9546
@@ -2628,7 +2628,7 @@ DATA_paleta_de_ocho:
 
 
 rellena_color:
-	di			;95a3   ; sin interrupciones
+	di			;95a3   ; sin interrupciones: va a rellenar un trozo de la tabla de color con un valor solo
 	push bc			;95a4
 	push af			;95a5
 	ld a,h			;95a6
@@ -3463,7 +3463,7 @@ L_9BAC:
 desplaza_las_estrellas:
 	and a			;9bb1   ; el acarreo a cero: la estrella que entra por la derecha es negra
 	push hl			;9bb2
-	rl (hl)		;9bb3   ; treinta y dos `rl (hl)` seguidos, sin bucle
+	rl (hl)		;9bb3   ; TREINTA Y DOS `rl (hl)` SEGUIDOS, sin bucle: desplazar una fila entera de la pantalla un pixel a la izquierda, con el acarreo pasando de un byte al siguiente
 	dec l			;9bb5
 	rl (hl)		;9bb6   ; el acarreo del byte anterior entra por la derecha
 	dec l			;9bb8
@@ -3675,7 +3675,7 @@ dibuja_el_marco:
 	ld d,(ix+002h)		;9d36
 	ld e,(ix+000h)		;9d39
 	call una_fila_del_marco		;9d3c   ; la fila de arriba
-	ld bc,00020h		;9d3f   ; una fila entera
+	ld bc,00020h		;9d3f   ; treinta y dos casillas: una fila entera de pantalla
 	add hl,bc			;9d42
 	ld b,(ix+005h)		;9d43
 L_9D46:
@@ -4059,7 +4059,7 @@ L_A365:
 	call pinta_un_caracter		;a373
 	inc l			;a376
 	dec de			;a377
-	ld a,03ah		;a378   ; los dos puntos
+	ld a,03ah		;a378   ; los dos puntos del medio
 	call pinta_un_caracter		;a37a
 	inc l			;a37d
 	ld a,(de)			;a37e
@@ -4144,7 +4144,7 @@ L_A3D9:
 	out (098h),a		;a3e1
 	ei			;a3e3
 	inc de			;a3e4
-	inc l			;a3e5   ; con `inc l`: dentro del mismo patron
+	inc l			;a3e5   ; y la fila siguiente, con `inc l`: dentro del mismo patron
 	djnz L_A3D9		;a3e6
 	pop bc			;a3e8
 	pop hl			;a3e9

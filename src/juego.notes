@@ -427,7 +427,7 @@ C 0x8c35 y la tabla dice si sigue
 C 0x8c37 con 0xFF, otra vez el mismo byte
 C 0x8c3c el segundo tramo, con su propio byte
 C 0x8c4a y aqui la tabla se para con un CERO, no con 0xFF
-C 0x8c50 el tercero
+C 0x8c50 el tercer tramo hacia arriba
 C 0x8c65 lo mismo pero hacia abajo: `add a,008h` en vez de `sub`, y `inc l` en vez de `dec l`
 C 0x8cb5 y este remata al dar la vuelta a los cinco bits bajos, o sea cada 32 filas
 L 0x90ac enciende_un_pixel
@@ -551,7 +551,7 @@ C 0x952c el patron siguiente
 C 0x9532 y al acabar la banda, siete paginas mas alla
 C 0x953b los tres bits bajos del byte alto se guardan
 C 0x953f el resto del byte alto
-C 0x9543 y el byte bajo, subido tres bits: es la cuenta del entrelazado de SCREEN 2
+C 0x9543 el byte bajo, subido tres bits: es la cuenta del entrelazado de SCREEN 2
 C 0x9554 el destino
 C 0x9556 de 0x58, 0x59 o 0x5A solo los dos bits bajos
 C 0x9559 por ocho
@@ -564,7 +564,7 @@ C 0x957d por la de 0x959B
 C 0x9582 pegados
 C 0x9583 y escrito ocho veces: un byte por patron, no por fila
 C 0x9587 dos `nop` de respiro para el VDP
-C 0x95a3 rellenar un trozo de la tabla de color con un valor solo
+C 0x95a3 sin interrupciones: va a rellenar un trozo de la tabla de color con un valor solo
 C 0x95b9 mismo reparto: tinta en los tres bits bajos
 C 0x95c5 y papel en los tres siguientes
 C 0x95d4 ocho filas por patron
@@ -799,13 +799,13 @@ C 0x8b42 la banda de delante, de 32 filas
 C 0x8b4b la fila de pantalla que le toca
 C 0x8b53 la segunda, de 16
 C 0x8b61 la tercera, tambien de 16 pero repintada una de cada dos
-C 0x8b74 la cuarta, una de cada cuatro
+C 0x8b74 la banda de 16, una de cada cuatro
 C 0x8b8b y la del horizonte, una de cada ocho
 C 0x9013 la estrella se coloca y su velocidad se copia a la aceleracion
 C 0x9023 la columna, al azar
 C 0x9026 en 64 sitios
 C 0x9028 desde 0x60
-C 0x902a y si cae en el agujero del centro
+C 0x902a si cae en el agujero del centro de la pantalla
 C 0x9032 se echa a un lado o al otro segun el bit 0
 C 0x903d la fila, tambien al azar
 C 0x9042 pero solo la mitad de arriba
@@ -952,7 +952,7 @@ C 0xa35d por dos
 C 0xa35f treinta y dos casillas por fila
 C 0xa365 los cinco digitos del reloj, del ultimo al primero
 C 0xa369 mas 0x30, el ASCII
-C 0xa378 y los dos puntos del medio
+C 0xa378 los dos puntos del medio
 C 0xa38b la fila 0, columna 0x26
 C 0xa391 ocho digitos
 C 0xa395 el bit 0 dice si ya salio una cifra distinta de cero
@@ -965,7 +965,7 @@ C 0xa3cc por ocho: cada uno son ocho bytes
 C 0xa3cf la hoja de caracteres que este puesta
 C 0xa3d7 ocho filas
 C 0xa3da sin interrupciones, byte a byte
-C 0xa3e5 y la fila siguiente, con `inc l`: dentro de un patron
+C 0xa3e5 y la fila siguiente, con `inc l`: dentro del mismo patron
 C 0xa3ec la fila 0, columna 0x70
 C 0xa420 en la prueba de tres pistas, 'PLAY ARCADE'
 C 0xa429 y en la partida entera, '3 COURSE TEST'
@@ -1073,13 +1073,13 @@ C 0x8a96 y el reloj se deja pintado
 C 0x8a99 ochenta cuadros de pausa
 C 0x8a9c con `halt`, que gasta menos que un bucle
 C 0x9252 aqui llega la interrupcion cuando el juego esta a medio montar: solo suena la musica
-C 0x925b la de fondo
+C 0x925b la musica de fondo
 C 0x925e y las dos voces de los efectos
 C 0x9274 los registros, de vuelta
 C 0x9284 la vuelta se empuja a mano: cuando esta rutina remate, se seguira por 0x92E7
 C 0x9288 el reloj, digito a digito, PERO HACIA ATRAS: en la prueba de tres pistas el tiempo se descuenta
 C 0x928f cada digito da la vuelta a 5 o a 9
-C 0x92a7 y aqui hacia adelante: en la partida entera el tiempo se suma
+C 0x92a7 el reloj sube, hacia adelante: en la partida entera el tiempo se suma
 C 0x92aa con la vuelta empujada tambien
 C 0x92b3 las centesimas van de seis en seis
 C 0x92d1 los tres digitos de arriba
@@ -1091,7 +1091,6 @@ C 0x948c el sitio del rotulo
 C 0x948e el reloj, de mayor a menor
 C 0x9492 mas 0x30, que es el ASCII
 C 0x949c un hueco: ahi van los dos puntos
-C 0x9605 el caracter, sin el bit de fin
 C 0x960c por ocho
 C 0x960f en la hoja de caracteres que este puesta
 C 0x9614 ocho filas
@@ -1115,7 +1114,7 @@ C 0x8cc9 y se recorta el byte alto
 C 0x8cce y si lo eran, hay que cambiar de banda
 C 0x8cd5 ocho paginas mas alla
 C 0x8cda y al llegar a la tercera se da la vuelta
-C 0x8ce0 lo mismo pero sobre `de`, byte a byte igual: dos rutinas gemelas porque el bucle de dibujo usa los dos pares
+C 0x8ce0 igual que 0x8CBE pero sobre `de`, byte a byte: dos rutinas gemelas porque el bucle de dibujo usa los dos pares
 C 0x8cf0 y su cambio de banda
 C 0x8e31 la vuelta, empujada a mano
 C 0x8e35 cuatro
@@ -1139,7 +1138,6 @@ C 0x9632 la pagina, byte a byte
 C 0x9639 DOS `inc h`: solo las paginas PARES de 0xC000 a 0xCE00
 C 0x963c hasta 0xD000
 C 0x9645 y los 0x800 juntados van a la VRAM
-C 0x974a lo que estaba puesto
 C 0x974f y las opciones se cierran
 C 0x996d '3 COURSE  TEST'
 C 0x9973 con la hoja de caracteres grande
@@ -1160,16 +1158,12 @@ C 0x8abe y en la prueba de tres, el mejor tiempo
 C 0x8b33 si la bola esta en el suelo
 C 0x8b38 se mira que casilla pisa
 C 0x8b3d y la ficha, guardada
-C 0x8b74 la banda de 16, una de cada cuatro
 C 0x8b7e los dos bits bajos
 C 0x8b86 y tres filas de pantalla mas abajo
-C 0x8b8b la del horizonte, una de cada ocho
 C 0x8b95 los tres bits bajos
 C 0x8b9f y una fila mas abajo
-C 0x8c50 el tercer tramo hacia arriba
 C 0x8c56 el byte que 0x8BEC escribio aqui
 C 0x8c5e y la tabla, que dice si sigue
-C 0x8c65 lo mismo pero hacia abajo: `add a,008h` en vez de `sub`, y `inc l` en vez de `dec l`
 C 0x8c6c la misma cuenta del byte alto: 0xC0 mas el doble de los tres bits bajos
 C 0x8c7b el primer tramo hacia abajo
 C 0x8c81 su byte, escrito por 0x8BE1
@@ -1178,14 +1172,10 @@ C 0x8c8f el segundo
 C 0x8c95 con el byte de 0x8BF1
 C 0x8c9f y este se para con un cero
 C 0x8ca3 el tercero, que remata al dar la vuelta a los cinco bits bajos
-C 0x8ce0 igual que 0x8CBE pero sobre `de`
 C 0x8ce8 dentro de la misma banda
-C 0x8cf0 y su cambio de banda
 C 0x8cf7 ocho paginas
-C 0x92a7 el reloj sube
 C 0x92c1 los segundos
 C 0x92c9 y los minutos
-C 0x95a3 sin interrupciones
 C 0x95a7 los dos bits de banda
 C 0x95ae y el 0x60 de escribir en la tabla de color
 C 0x95bc la tinta, por su paleta
@@ -1198,12 +1188,10 @@ C 0x97e5 ocho filas
 C 0x97e8 y la direccion de VRAM, con el entrelazado de siempre
 C 0x9b5f la cuenta de la pausa
 C 0x9b62 una menos
-C 0x9bb3 treinta y dos `rl (hl)` seguidos, sin bucle
 C 0x9bef y cada ocho, un `dec hl` para cambiar de banda
 C 0x9c07 asi se desplaza una fila entera de pantalla un pixel, con el acarreo saltando de byte en byte
 C 0x9dc6 la casilla, guardada
 C 0x9dc8 y la siguiente
-C 0xa3ec la fila 0, columna 0x70
 C 0xa3f2 el mejor tiempo, digito a digito
 C 0xa40a con los dos puntos en medio
 C 0xbf43 lo leido
@@ -1211,7 +1199,6 @@ C 0xbf44 el nibble bajo indexa la tabla de traduccion de 0xBF52
 C 0xbf4e y el bit 4 es el disparo
 C 0xbf62 la tecla que se pide
 C 0xbf68 se selecciona su fila
-C 0xbf70 y se mira su bit
 C 0xbf63 el puerto 0xAA es el que elige la fila del teclado
 C 0xbf66 lo que hay puesto ahora
 C 0xbf6a los bits 3 a 6 del codigo de tecla son la FILA, bajados a los cuatro de abajo
@@ -1234,7 +1221,7 @@ C 0x9c0d y al llegar al primero, la estrella se pierde por la izquierda
 C 0x9451 el reloj
 C 0x9454 y el mejor tiempo
 C 0x9465 la linea de la tabla
-C 0x9468 y sus diez bytes
+C 0x9467 y sus diez bytes
 C 0x941d una centesima
 C 0x9422 al llegar a seis, vuelta a cero
 C 0x9429 y se lleva una a las decimas
@@ -1248,7 +1235,6 @@ C 0xa3b0 los tres bits bajos del byte alto
 C 0xa3b7 el byte bajo, subido tres
 C 0xa3c1 y armados los dos, es la direccion de VRAM del patron
 C 0xa3d9 ocho filas, byte a byte
-C 0xa3e5 con `inc l`: dentro del mismo patron
 C 0x92b1 una centesima mas
 C 0x92be y al llegar a diez, se lleva una
 C 0x97dd el caracter por ocho
@@ -1269,12 +1255,9 @@ C 0x98e6 el rotulo
 C 0x98ea la fila siguiente
 C 0x98ec dos lineas
 C 0x8ec0 la direccion, otra vez
-C 0x8ec4 con el bit 5 que la lleva al color
 C 0x8ecc ocho filas mas abajo
 C 0x8ed3 y guardado
 C 0x9256 los registros que la interrupcion va a tocar
-C 0x925b la musica de fondo
-C 0x9274 y de vuelta
 C 0x8ef7 la fila siguiente
 C 0x8f04 el nibble bajo del color
 C 0x8f06 y si el patron esta lleno
@@ -1285,10 +1268,8 @@ C 0x95ee la direccion, para LEER
 C 0x95f8 el byte
 C 0x95fe uno menos
 C 0xa36b el digito, pintado
-C 0xa378 los dos puntos
 C 0xa381 y los de la derecha
 C 0x953e los tres bits, guardados
-C 0x9543 el byte bajo, subido tres
 C 0x9550 y todo junto
 C 0x89d2 la bola, al suelo
 C 0x89df y la marca de nivel nuevo
@@ -1296,8 +1277,6 @@ C 0x8ca9 el tercer tramo hacia abajo
 C 0x8cb3 la casilla siguiente
 C 0x9d85 la esquina de la derecha
 C 0x9d8b y su relleno
-C 0x9883 la direccion de VRAM de la linea
-C 0x988b diez bytes por linea
 C 0x8f6c el contador, a cero
 C 0x8f77 y el conmutador de los dos juegos
 C 0x8f8d cada dos vueltas
@@ -1306,7 +1285,6 @@ C 0x8fba la fila nueva
 C 0x8ff3 la aceleracion en x
 C 0x8ffc y la de y
 C 0x9016 la velocidad se copia a la aceleracion
-C 0x902a el agujero del centro de la pantalla
 C 0x9046 desde 0x50
 C 0x9074 y por debajo, al reves
 C 0x8d06 la fila
@@ -1320,8 +1298,6 @@ C 0x8d76 y frenar
 C 0x8e5b la tabla de filas de pista
 C 0x8e6f frena
 C 0x8e79 acelera
-C 0x9d33 el alto
-C 0x9d3f una fila entera
 C 0x9d47 las filas de en medio
 C 0x9d63 y la de abajo
 C 0x9bc8 uno por byte
@@ -1344,7 +1320,6 @@ C 0x8b03 la segunda banda
 C 0x8b08 la tercera
 C 0x8b0d la cuarta
 C 0x8b1e la del fondo
-C 0x9319 la tabla de curvas
 C 0x931c la que toque
 C 0x9338 la marca
 C 0x9341 su columna
