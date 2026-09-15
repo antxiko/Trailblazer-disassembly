@@ -1321,7 +1321,6 @@ C 0x8b08 la tercera
 C 0x8b0d la cuarta
 C 0x8b1e la del fondo
 C 0x931c la que toque
-C 0x9338 la marca
 C 0x9341 su columna
 C 0x9350 seis bytes por marca
 C 0x9365 el reloj a cero
